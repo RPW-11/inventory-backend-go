@@ -6,6 +6,7 @@ import (
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type SignupController struct {
@@ -26,6 +27,17 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		c.JSON(http.StatusConflict, domain.Response{Message: "User already exists with the given email"})
 		return
 	}
+
+	encryptedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(request.Password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	request.Password = string(encryptedPassword)
 
 	user := domain.User{
 		ID:       uuid.NewString(),
