@@ -54,7 +54,7 @@ func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
 	wid := c.Param("id")
 
 	if wid == "" || request.Name == "" || request.Address == "" {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Please fill all the required fields!"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "Please fill all the required fields! (id, name, address)"})
 		return
 	}
 
@@ -73,4 +73,32 @@ func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.Response{
 		Message: "Warehouse updated successfully",
 	})
+}
+
+func (wc *WarehouseController) DeleteWarehouseByID(c *gin.Context) {
+	wid := c.Param("id")
+	if wid == "" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "No id given"})
+		return
+	}
+
+	err := wc.WarehouseUsecase.DeleteByID(wid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Message: "Warehouse deleted successfully",
+	})
+}
+
+func (wc *WarehouseController) GetWarehouses(c *gin.Context) {
+	warehouses, err := wc.WarehouseUsecase.Fetch()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, warehouses)
 }

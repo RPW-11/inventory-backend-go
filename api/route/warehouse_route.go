@@ -13,6 +13,8 @@ func NewWarehouseRoute(group *gin.RouterGroup, db *gorm.DB) {
 	wc := controller.WarehouseController{
 		WarehouseUsecase: usecase.NewWarehouseUsecase(wr),
 	}
+	group.GET("/warehouse", wc.GetWarehouses)
 	group.POST("/warehouse", wc.CreateWarehouse)
 	group.PUT("/warehouse/:id", wc.ModifyWarehouseByID)
+	group.DELETE("/warehouse/:id", wc.DeleteWarehouseByID)
 }
