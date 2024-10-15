@@ -8,9 +8,15 @@ import (
 
 // register all the available routes
 func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
-	privateRouter := gin.Group("v1")
+	router := gin.Group("v1")
+
+	// Public routes
+	publicRouter := router.Group("")
+
+	NewSignupRouter(publicRouter, env, db)
+	NewLoginRoute(publicRouter, env, db)
 
 	// Private routes
-	NewHomeRouter(privateRouter, env, db)
+	// privateRouter := router.Group("")
 
 }

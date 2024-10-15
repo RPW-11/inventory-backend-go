@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewHomeRouter(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB) {
+func NewSignupRouter(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB) {
 	ur := repository.NewUserRepository(db)
 	sc := controller.SignupController{
 		SignupUsecase: usecase.NewSignupUsecase(ur),
