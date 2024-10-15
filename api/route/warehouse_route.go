@@ -14,4 +14,5 @@ func NewWarehouseRoute(group *gin.RouterGroup, db *gorm.DB) {
 		WarehouseUsecase: usecase.NewWarehouseUsecase(wr),
 	}
 	group.POST("/warehouse", wc.CreateWarehouse)
+	group.PUT("/warehouse/:id", wc.ModifyWarehouseByID)
 }

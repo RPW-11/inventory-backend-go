@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/gin-gonic/gin"
@@ -39,5 +40,37 @@ func (wc *WarehouseController) CreateWarehouse(c *gin.Context) {
 
 	c.JSON(http.StatusOK, domain.Response{
 		Message: "Warehouse created successfully",
+	})
+}
+
+func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
+	var request domain.Warehouse
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	wid := c.Param("id")
+
+	if wid == "" || request.Name == "" || request.Address == "" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "Please fill all the required fields!"})
+		return
+	}
+
+	warehouse := domain.Warehouse{
+		Name:      request.Name,
+		Address:   request.Address,
+		CreatedAt: time.Now(),
+	}
+
+	err = wc.WarehouseUsecase.ModifyByID(wid, &warehouse)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{
+		Message: "Warehouse updated successfully",
 	})
 }
