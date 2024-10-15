@@ -1,6 +1,9 @@
 package usecase
 
-import "github.com/RPW-11/inventory_management_be/domain"
+import (
+	"github.com/RPW-11/inventory_management_be/domain"
+	"github.com/RPW-11/inventory_management_be/internal/tokenutil"
+)
 
 type signupUsecase struct {
 	userRepository domain.UserRepository
@@ -18,4 +21,12 @@ func (su *signupUsecase) Create(user *domain.User) error {
 
 func (su *signupUsecase) GetUserByEmail(email string) (domain.User, error) {
 	return su.userRepository.GetByEmail(email)
+}
+
+func (su *signupUsecase) CreateAccessToken(user *domain.User, secret string, expiry int) (string, error) {
+	return tokenutil.CreateAccessToken(user, secret, expiry)
+}
+
+func (su *signupUsecase) CreateRefreshToken(user *domain.User, secret string, expiry int) (string, error) {
+	return tokenutil.CreateRefreshToken(user, secret, expiry)
 }

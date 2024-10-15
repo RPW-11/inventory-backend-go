@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"github.com/RPW-11/inventory_management_be/bootstrap"
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 
 type SignupController struct {
 	SignupUsecase domain.SignupUsecase
+	Env           *bootstrap.Env
 }
 
 func (sc *SignupController) Signup(c *gin.Context) {
@@ -53,6 +55,22 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, domain.Response{Message: "Success"})
+	accessToken, err := sc.SignupUsecase.CreateAccessToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
 
+	refreshToken, err := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	response := domain.SignupResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	c.JSON(http.StatusOK, response)
 }

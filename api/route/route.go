@@ -11,6 +11,6 @@ func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
 	privateRouter := gin.Group("v1")
 
 	// Private routes
-	NewHomeRouter(privateRouter, db)
+	NewHomeRouter(privateRouter, env, db)
 
 }
