@@ -20,6 +20,7 @@ func (Warehouse) TableName() string {
 
 type WarehouseRepository interface {
 	Create(warehouse *Warehouse) error
+	GetByID(warehouseID string) (Warehouse, error)
 	ModifyByID(warehouseID string, warehouse *Warehouse) error
 	DeleteByID(warehouseID string) error
 	Fetch() ([]Warehouse, error)

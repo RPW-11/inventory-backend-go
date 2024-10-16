@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/RPW-11/inventory_management_be/domain"
 	"gorm.io/gorm"
 )
@@ -22,7 +24,11 @@ func (pr *productRepository) Create(product *domain.Product) error {
 
 func (pr *productRepository) GetByID(id string) (domain.Product, error) {
 	var product domain.Product
-	result := pr.database.Where("id = ?", id).First(&product)
+	result := pr.database.Where("id = ?", id).Find(&product)
+
+	if result.RowsAffected == 0 {
+		return product, fmt.Errorf("no existing product")
+	}
 
 	return product, result.Error
 }
