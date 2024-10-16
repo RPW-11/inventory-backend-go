@@ -1,6 +1,7 @@
 package tokenutil
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -33,4 +34,40 @@ func CreateRefreshToken(user *domain.User, secret string, expiry int) (string, e
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(secret))
+}
+
+func IsAuthorized(requestToken, secret string) (bool, error) {
+	_, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func ExtractPositionIDFromToken(requestToken, secret string) (string, string, error) {
+	token, err := jwt.Parse(requestToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return "", "", err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+
+	if !ok && !token.Valid {
+		return "", "", fmt.Errorf("invalid Token")
+	}
+
+	return claims["id"].(string), claims["position"].(string), nil
+
 }

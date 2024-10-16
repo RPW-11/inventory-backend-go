@@ -1,6 +1,7 @@
 package route
 
 import (
+	"github.com/RPW-11/inventory_management_be/api/middleware"
 	"github.com/RPW-11/inventory_management_be/bootstrap"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -17,7 +18,9 @@ func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
 	NewLoginRoute(publicRouter, env, db)
 
 	// Private routes
+	jwtMiddleware := middleware.JwtAuthMiddleware(env.AccessTokenSecret)
 	privateRouter := router.Group("")
+	privateRouter.Use(jwtMiddleware)
 	NewInventoryRoute(privateRouter, db)
 	NewWarehouseRoute(privateRouter, db)
 }
