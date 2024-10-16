@@ -65,3 +65,41 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 
 	return err
 }
+
+func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) {
+	productDetails := []domain.ProductDetail{}
+
+	products, err := iu.productRepository.Fetch()
+	if err != nil {
+		return productDetails, err
+	}
+
+	for _, p := range products {
+		ivs, err := iu.inventoryRepository.GetByProductID(p.ID)
+		if err != nil {
+			return productDetails, err
+		}
+		productDetail := domain.ProductDetail{
+			Product:    p,
+			Warehouses: []domain.ProductDetailWarehouse{},
+		}
+
+		// grab the quantity and query all the warehouse detail
+		for _, i := range ivs {
+			warehouse, err := iu.warehouseRepository.GetByID(i.WarehouseId)
+			if err != nil {
+				return productDetails, err
+			}
+			productDetail.Warehouses = append(productDetail.Warehouses, domain.ProductDetailWarehouse{
+				ID:       warehouse.ID,
+				Name:     warehouse.Name,
+				Address:  warehouse.Address,
+				Quantity: i.Quantity,
+			})
+		}
+
+		// append the product detail to the array
+		productDetails = append(productDetails, productDetail)
+	}
+	return productDetails, err
+}

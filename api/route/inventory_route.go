@@ -17,5 +17,6 @@ func NewInventoryRoute(group *gin.RouterGroup, db *gorm.DB) {
 		InventoryUsecase: usecase.NewInventoryUsecase(ir, pr, wr),
 	}
 
+	group.GET("/product-inventory", ic.GetProductDetails)
 	group.POST("/inventory", ic.CreateProductInventory)
 }

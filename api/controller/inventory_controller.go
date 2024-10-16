@@ -48,3 +48,13 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 		return
 	}
 }
+
+func (ic *InventoryController) GetProductDetails(c *gin.Context) {
+	productDetails, err := ic.InventoryUsecase.GetProductDetails()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, productDetails)
+}

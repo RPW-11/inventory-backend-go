@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 const (
 	TableInventory = "Inventory"
@@ -24,6 +26,18 @@ type CreateInventoryRequest struct {
 	WarehouseID        string  `json:"warehouseId" binding:"required"`
 }
 
+type ProductDetail struct {
+	Product    Product                  `json:"product"`
+	Warehouses []ProductDetailWarehouse `json:"warehouses"`
+}
+
+type ProductDetailWarehouse struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	Address  string `json:"address"`
+	Quantity int    `json:"quantity"`
+}
+
 func (Inventory) TableName() string {
 	return TableInventory
 }
@@ -32,8 +46,10 @@ type InventoryRepository interface {
 	Create(inventory *Inventory) error
 	GetByProductWarehouseID(productID, warehouseID string) (Inventory, error)
 	ModifyByID(inventoryID int, inventory *Inventory) error
+	GetByProductID(productID string) ([]Inventory, error)
 }
 
 type InventoryUsecase interface {
 	CreateProductInventory(product *Product, warehouseID string, quantity int) error
+	GetProductDetails() ([]ProductDetail, error)
 }

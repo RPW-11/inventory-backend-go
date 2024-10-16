@@ -39,3 +39,10 @@ func (ir *inventoryRepository) ModifyByID(inventoryID int, inventory *domain.Inv
 
 	return result.Error
 }
+
+func (ir *inventoryRepository) GetByProductID(productID string) ([]domain.Inventory, error) {
+	var inventories []domain.Inventory
+	result := ir.database.Where("product_id = ?", productID).Find(&inventories)
+
+	return inventories, result.Error
+}
