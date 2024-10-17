@@ -66,6 +66,10 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 	return err
 }
 
+func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, error) {
+	return iu.inventoryRepository.GetByID(id)
+}
+
 func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) {
 	productDetails := []domain.ProductDetail{}
 
@@ -80,8 +84,8 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 			return productDetails, err
 		}
 		productDetail := domain.ProductDetail{
-			Product:    p,
-			Warehouses: []domain.ProductDetailWarehouse{},
+			Product:     p,
+			Inventories: []domain.InventoryDetail{},
 		}
 
 		// grab the quantity and query all the warehouse detail
@@ -90,11 +94,12 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 			if err != nil {
 				return productDetails, err
 			}
-			productDetail.Warehouses = append(productDetail.Warehouses, domain.ProductDetailWarehouse{
-				ID:       warehouse.ID,
-				Name:     warehouse.Name,
-				Address:  warehouse.Address,
-				Quantity: i.Quantity,
+			productDetail.Inventories = append(productDetail.Inventories, domain.InventoryDetail{
+				ID:               i.ID,
+				WarehouseID:      i.WarehouseId,
+				WarehouseName:    warehouse.Name,
+				WarehouseAddress: warehouse.Address,
+				ProductQuantity:  i.Quantity,
 			})
 		}
 
@@ -102,4 +107,8 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 		productDetails = append(productDetails, productDetail)
 	}
 	return productDetails, err
+}
+
+func (iu *inventoryUsecase) ModifyByID(inventoryID int, inventory *domain.Inventory) error {
+	return iu.inventoryRepository.ModifyByID(inventoryID, inventory)
 }

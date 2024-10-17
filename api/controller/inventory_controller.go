@@ -2,6 +2,8 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/gin-gonic/gin"
@@ -57,4 +59,44 @@ func (ic *InventoryController) GetProductDetails(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, productDetails)
+}
+
+func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
+	var request domain.UpdateQuantityRequest
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	// check if the id is valid
+	invID, err := strconv.Atoi(c.Param("id"))
+	existing, err := ic.InventoryUsecase.GetByID(invID)
+	if err != nil {
+		if err.Error() == "no existing inventory" {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid inventory id"})
+			return
+		}
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	// check if quantity valid
+	if request.Quantity <= 0 {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid quantity"})
+		return
+	}
+
+	// update the quantity
+	existing.Quantity = request.Quantity
+	existing.ID = 0
+	existing.UpdatedAt = time.Now()
+
+	err = ic.InventoryUsecase.ModifyByID(invID, &existing)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{Message: "Quantity updated successfully"})
 }

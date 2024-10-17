@@ -26,16 +26,21 @@ type CreateInventoryRequest struct {
 	WarehouseID        string  `json:"warehouseId" binding:"required"`
 }
 
-type ProductDetail struct {
-	Product    Product                  `json:"product"`
-	Warehouses []ProductDetailWarehouse `json:"warehouses"`
+type UpdateQuantityRequest struct {
+	Quantity int `json:"quantity" binding:"required"`
 }
 
-type ProductDetailWarehouse struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Address  string `json:"address"`
-	Quantity int    `json:"quantity"`
+type ProductDetail struct {
+	Product     Product           `json:"product"`
+	Inventories []InventoryDetail `json:"inventories"`
+}
+
+type InventoryDetail struct {
+	ID               int    `json:"id"`
+	WarehouseID      string `json:"warehouseId"`
+	WarehouseName    string `json:"warehouseName"`
+	WarehouseAddress string `json:"warehouseAddress"`
+	ProductQuantity  int    `json:"productQuantity"`
 }
 
 func (Inventory) TableName() string {
@@ -44,6 +49,7 @@ func (Inventory) TableName() string {
 
 type InventoryRepository interface {
 	Create(inventory *Inventory) error
+	GetByID(id int) (Inventory, error)
 	GetByProductWarehouseID(productID, warehouseID string) (Inventory, error)
 	ModifyByID(inventoryID int, inventory *Inventory) error
 	GetByProductID(productID string) ([]Inventory, error)
@@ -51,5 +57,7 @@ type InventoryRepository interface {
 
 type InventoryUsecase interface {
 	CreateProductInventory(product *Product, warehouseID string, quantity int) error
+	GetByID(id int) (Inventory, error)
 	GetProductDetails() ([]ProductDetail, error)
+	ModifyByID(inventoryID int, inventory *Inventory) error
 }

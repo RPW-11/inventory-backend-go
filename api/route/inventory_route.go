@@ -19,4 +19,5 @@ func NewInventoryRoute(group *gin.RouterGroup, db *gorm.DB) {
 
 	group.GET("/product-inventory", ic.GetProductDetails)
 	group.POST("/inventory", ic.CreateProductInventory)
+	group.PATCH("/inventory-update-quantity/:id", ic.UpdateQuantity)
 }

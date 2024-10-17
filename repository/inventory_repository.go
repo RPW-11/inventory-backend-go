@@ -23,6 +23,17 @@ func (ir *inventoryRepository) Create(inventory *domain.Inventory) error {
 	return result.Error
 }
 
+func (ir *inventoryRepository) GetByID(id int) (domain.Inventory, error) {
+	var inventory domain.Inventory
+	result := ir.database.Where("id = ?", id).Find(&inventory)
+
+	if result.RowsAffected == 0 {
+		return inventory, fmt.Errorf("no existing inventory")
+	}
+
+	return inventory, result.Error
+}
+
 func (ir *inventoryRepository) GetByProductWarehouseID(productID, warehouseID string) (domain.Inventory, error) {
 	var inventory domain.Inventory
 	result := ir.database.Where(&domain.Inventory{ProductId: productID, WarehouseId: warehouseID}).Find(&inventory)
