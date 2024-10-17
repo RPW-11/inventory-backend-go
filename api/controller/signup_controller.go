@@ -61,7 +61,7 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
+	refreshToken, err := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.RefreshTokenSecret, sc.Env.RefreshTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
 		return

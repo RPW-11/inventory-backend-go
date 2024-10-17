@@ -40,7 +40,7 @@ func (lc *LoginController) Login(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := lc.LoginUsecase.CreateRefreshToken(&user, lc.Env.AccessTokenSecret, lc.Env.AccessTokenExpiryHour)
+	refreshToken, err := lc.LoginUsecase.CreateRefreshToken(&user, lc.Env.RefreshTokenSecret, lc.Env.RefreshTokenExpiryHour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
 		return

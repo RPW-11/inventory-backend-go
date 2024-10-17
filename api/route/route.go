@@ -16,6 +16,7 @@ func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
 
 	NewSignupRouter(publicRouter, env, db)
 	NewLoginRoute(publicRouter, env, db)
+	NewRefreshTokenRoute(publicRouter, env, db)
 
 	// Private routes
 	jwtMiddleware := middleware.JwtAuthMiddleware(env.AccessTokenSecret)

@@ -68,6 +68,10 @@ func ExtractPositionIDFromToken(requestToken, secret string) (string, string, er
 		return "", "", fmt.Errorf("invalid Token")
 	}
 
-	return claims["id"].(string), claims["position"].(string), nil
+	// case for refresh token that doesn't not have "position" attribute in its claim
+	if _, ok := claims["position"]; !ok {
+		return claims["id"].(string), "", nil
+	}
 
+	return claims["id"].(string), claims["position"].(string), nil
 }
