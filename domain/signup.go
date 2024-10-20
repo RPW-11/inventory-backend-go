@@ -7,8 +7,7 @@ type SignupRequest struct {
 }
 
 type SignupResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken string `json:"accessToken"`
 }
 
 type SignupUsecase interface {

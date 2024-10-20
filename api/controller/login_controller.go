@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/RPW-11/inventory_management_be/bootstrap"
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -47,9 +48,10 @@ func (lc *LoginController) Login(c *gin.Context) {
 	}
 
 	response := domain.LoginResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken: accessToken,
 	}
+
+	c.SetCookie("refresh_token", refreshToken, 3600*lc.Env.RefreshTokenExpiryHour, "/", strings.Split(c.Request.Host, ":")[0], true, true)
 
 	c.JSON(http.StatusOK, response)
 }

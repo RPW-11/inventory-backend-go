@@ -71,6 +71,11 @@ func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
 
 	// check if the id is valid
 	invID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid inventory id"})
+		return
+	}
+
 	existing, err := ic.InventoryUsecase.GetByID(invID)
 	if err != nil {
 		if err.Error() == "no existing inventory" {
