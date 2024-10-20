@@ -13,8 +13,8 @@ type Inventory struct {
 	ProductId   string    `gorm:"column:product_id" json:"productId"`
 	WarehouseId string    `gorm:"column:warehouse_id" json:"warehouseId"`
 	Quantity    int       `gorm:"column:quantity" json:"quantity"`
-	CreatedAt   time.Time `gorm:"column:created_at" json:"created_at"`
-	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updated_at"`
+	CreatedAt   time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 type CreateInventoryRequest struct {
