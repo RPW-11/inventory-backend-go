@@ -23,12 +23,12 @@ type WarehouseRepository interface {
 	GetByID(warehouseID string) (Warehouse, error)
 	ModifyByID(warehouseID string, warehouse *Warehouse) error
 	DeleteByID(warehouseID string) error
-	Fetch() ([]Warehouse, error)
+	Fetch(name string) ([]Warehouse, error)
 }
 
 type WarehouseUsecase interface {
 	Create(warehouse *Warehouse) error
 	ModifyByID(warehouseID string, warehouse *Warehouse) error
 	DeleteByID(warehouseID string) error
-	Fetch() ([]Warehouse, error)
+	Fetch(name string) ([]Warehouse, error)
 }

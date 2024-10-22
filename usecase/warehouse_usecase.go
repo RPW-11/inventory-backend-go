@@ -24,6 +24,6 @@ func (wu *warehouseUsecase) DeleteByID(warehouseID string) error {
 	return wu.warehouseRepository.DeleteByID(warehouseID)
 }
 
-func (wu *warehouseUsecase) Fetch() ([]domain.Warehouse, error) {
-	return wu.warehouseRepository.Fetch()
+func (wu *warehouseUsecase) Fetch(name string) ([]domain.Warehouse, error) {
+	return wu.warehouseRepository.Fetch(name)
 }

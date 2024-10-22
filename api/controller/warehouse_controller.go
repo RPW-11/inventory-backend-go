@@ -94,7 +94,8 @@ func (wc *WarehouseController) DeleteWarehouseByID(c *gin.Context) {
 }
 
 func (wc *WarehouseController) GetWarehouses(c *gin.Context) {
-	warehouses, err := wc.WarehouseUsecase.Fetch()
+	warehouseName := c.Query("name")
+	warehouses, err := wc.WarehouseUsecase.Fetch(warehouseName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
 		return

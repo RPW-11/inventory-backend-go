@@ -46,9 +46,15 @@ func (wr *warehouseRepository) DeleteByID(warehouseID string) error {
 	return result.Error
 }
 
-func (wr *warehouseRepository) Fetch() ([]domain.Warehouse, error) {
+func (wr *warehouseRepository) Fetch(name string) ([]domain.Warehouse, error) {
 	var ws []domain.Warehouse
-	result := wr.database.Find(&ws)
+	query := wr.database.Model(&ws)
+
+	if name != "" {
+		query.Where("lower(name) LIKE lower(?)", "%"+name+"%")
+	}
+
+	result := query.Find(&ws)
 
 	return ws, result.Error
 }
