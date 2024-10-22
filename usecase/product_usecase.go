@@ -20,6 +20,6 @@ func (pu *productUsecase) GetByID(id string) (domain.Product, error) {
 	return pu.productRepository.GetByID(id)
 }
 
-func (pu *productUsecase) Fetch() ([]domain.Product, error) {
-	return pu.productRepository.Fetch()
+func (pu *productUsecase) Fetch(name string) ([]domain.Product, error) {
+	return pu.productRepository.Fetch(name)
 }

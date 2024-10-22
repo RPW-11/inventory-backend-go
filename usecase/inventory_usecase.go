@@ -73,7 +73,7 @@ func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, error) {
 func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) {
 	productDetails := []domain.ProductDetail{}
 
-	products, err := iu.productRepository.Fetch()
+	products, err := iu.productRepository.Fetch("")
 	if err != nil {
 		return productDetails, err
 	}

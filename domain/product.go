@@ -22,11 +22,11 @@ func (Product) TableName() string {
 type ProductRepository interface {
 	Create(product *Product) error
 	GetByID(id string) (Product, error)
-	Fetch() ([]Product, error)
+	Fetch(name string) ([]Product, error)
 }
 
 type ProductUsecase interface {
 	Create(product *Product) error
 	GetByID(id string) (Product, error)
-	Fetch() ([]Product, error)
+	Fetch(name string) ([]Product, error)
 }

@@ -29,4 +29,5 @@ func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
 	privateRouter.Use(jwtMiddleware)
 	NewInventoryRoute(privateRouter, db)
 	NewWarehouseRoute(privateRouter, db)
+	NewProductRoute(privateRouter, db)
 }

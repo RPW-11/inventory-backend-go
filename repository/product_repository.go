@@ -33,9 +33,15 @@ func (pr *productRepository) GetByID(id string) (domain.Product, error) {
 	return product, result.Error
 }
 
-func (pr *productRepository) Fetch() ([]domain.Product, error) {
+func (pr *productRepository) Fetch(name string) ([]domain.Product, error) {
 	var products []domain.Product
-	result := pr.database.Find(&products)
+	query := pr.database.Model(&products)
+
+	if name != "" {
+		query.Where("lower(name) LIKE lower(?)", "%"+name+"%")
+	}
+
+	result := query.Find(&products)
 
 	return products, result.Error
 }
