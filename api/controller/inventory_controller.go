@@ -21,9 +21,16 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 		return
 	}
 
-	if request.ProductPrice <= 0 || request.ProductQuantity < 0 {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid number of price or quantity"})
+	if request.ProductPrice <= 0 {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "Product price must be more than 0"})
 		return
+	}
+
+	for _, warehouse := range request.Warehouses {
+		if warehouse.ProductQuantity <= 0 {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "Product quantity must be more than 0"})
+			return
+		}
 	}
 
 	product := domain.Product{
@@ -33,7 +40,13 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 		Price:       request.ProductPrice,
 	}
 
-	err = ic.InventoryUsecase.CreateProductInventory(&product, request.WarehouseID, request.ProductQuantity)
+	for _, warehouse := range request.Warehouses {
+		err = ic.InventoryUsecase.CreateProductInventory(&product, warehouse.WarehouseID, warehouse.ProductQuantity)
+		if err != nil {
+			break
+		}
+	}
+
 	if err == nil {
 		c.JSON(http.StatusOK, domain.Response{
 			Message: "Inventory created successfully",
@@ -43,7 +56,7 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 
 	switch err.Error() {
 	case "no existing warehouse":
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid warehouse"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "Warehouse doesnot exist"})
 		return
 	default:
 		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})

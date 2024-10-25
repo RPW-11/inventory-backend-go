@@ -22,8 +22,10 @@ type CreateInventoryRequest struct {
 	ProductName        string  `json:"productName" binding:"required"`
 	ProductDescription string  `json:"productDescription" binding:"required"`
 	ProductPrice       float64 `json:"productPrice" binding:"required"`
-	ProductQuantity    int     `json:"productQuantity" binding:"required"`
-	WarehouseID        string  `json:"warehouseId" binding:"required"`
+	Warehouses         []struct {
+		WarehouseID     string `json:"warehouseId" binding:"required"`
+		ProductQuantity int    `json:"productQuantity" binding:"required"`
+	} `json:"warehouses" binding:"required"`
 }
 
 type UpdateQuantityRequest struct {
