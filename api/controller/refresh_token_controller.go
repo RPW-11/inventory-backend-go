@@ -14,15 +14,14 @@ type RefreshTokenController struct {
 }
 
 func (rtc *RefreshTokenController) RefreshToken(c *gin.Context) {
-	var request domain.RefreshTokenRequest
+	currentRefreshToken, err := c.Cookie("refresh_token")
 
-	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
 		return
 	}
 
-	id, _, err := rtc.RefreshTokenUsecase.ExtractPositionIDFromToken(request.RefreshToken, rtc.Env.RefreshTokenSecret)
+	id, _, err := rtc.RefreshTokenUsecase.ExtractPositionIDFromToken(currentRefreshToken, rtc.Env.RefreshTokenSecret)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, domain.Response{Message: "Invalid refresh token"})
 		return
@@ -40,15 +39,8 @@ func (rtc *RefreshTokenController) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	refreshToken, err := rtc.RefreshTokenUsecase.CreateRefreshToken(&user, rtc.Env.RefreshTokenSecret, rtc.Env.RefreshTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
-		return
-	}
-
 	response := domain.RefreshTokenResponse{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
+		AccessToken: accessToken,
 	}
 
 	c.JSON(http.StatusOK, response)
