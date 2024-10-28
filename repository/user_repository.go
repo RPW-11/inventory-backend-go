@@ -40,3 +40,10 @@ func (ur *userRepository) GetByID(id string) (domain.User, error) {
 
 	return user, result.Error
 }
+
+func (ur *userRepository) Fetch() ([]domain.User, error) {
+	var users []domain.User
+	result := ur.database.Select("id", "email", "position", "created_at", "updated_at").Find(&users)
+
+	return users, result.Error
+}

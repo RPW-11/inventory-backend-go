@@ -17,7 +17,7 @@ func (rtc *RefreshTokenController) RefreshToken(c *gin.Context) {
 	currentRefreshToken, err := c.Cookie("refresh_token")
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		c.JSON(http.StatusUnauthorized, domain.Response{Message: err.Error()})
 		return
 	}
 
