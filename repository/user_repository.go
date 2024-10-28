@@ -43,7 +43,7 @@ func (ur *userRepository) GetByID(id string) (domain.User, error) {
 
 func (ur *userRepository) Fetch() ([]domain.User, error) {
 	var users []domain.User
-	result := ur.database.Select("id", "email", "position", "created_at", "updated_at").Find(&users)
+	result := ur.database.Select("id", "email", "position", "full_name", "created_at", "updated_at").Find(&users)
 
 	return users, result.Error
 }
