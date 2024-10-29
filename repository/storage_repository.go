@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"fmt"
 	"mime/multipart"
 
 	"github.com/RPW-11/inventory_management_be/bootstrap"
@@ -36,7 +37,9 @@ func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHe
 		return "", err
 	}
 
-	return key, nil
+	imageUrl := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", sr.env.S3Bucket, key)
+
+	return imageUrl, nil
 }
 
 func (sr *storageRepository) DeleteImage(fileName string) error {

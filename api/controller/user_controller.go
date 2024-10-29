@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/gin-gonic/gin"
@@ -40,16 +41,27 @@ func (uc *UserController) UpdateProfilePicture(c *gin.Context) {
 		return
 	}
 
+	defer file.Close()
+
+	contentType := fileHeader.Header.Get("Content-Type")
+	if contentType != "image/png" && contentType != "image/jpeg" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid file type"})
+		return
+	}
+
 	if fileHeader.Size > 5000000 {
 		c.JSON(http.StatusBadRequest, domain.Response{Message: "image must be less than 5 MB"})
 		return
 	}
 
-	err = uc.UserUsecase.UpdateProfilePicture(file, fileHeader)
+	userId := c.GetString("x-user-id")
+	fileHeader.Filename = userId + "." + strings.Split(contentType, "/")[1]
+
+	err = uc.UserUsecase.UpdateProfilePicture(userId, file, fileHeader)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusAccepted, domain.Response{Message: "profile updated successfully"})
+	c.JSON(http.StatusOK, domain.Response{Message: "profile updated successfully"})
 }

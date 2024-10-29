@@ -40,11 +40,12 @@ type UserRepository interface {
 	Create(user *User) error
 	GetByEmail(email string) (User, error)
 	GetByID(id string) (User, error)
+	ModifyUserByID(id string, user *User) error
 	Fetch() ([]User, error)
 }
 
 type UserUsecase interface {
 	GetProfile(id string) (Profile, error)
 	GetAllUsers() ([]User, error)
-	UpdateProfilePicture(file multipart.File, fileHeader *multipart.FileHeader) error
+	UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) error
 }

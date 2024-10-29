@@ -34,8 +34,13 @@ func (uu *userUsecase) GetProfile(id string) (domain.Profile, error) {
 	return profile, err
 }
 
-func (uu *userUsecase) UpdateProfilePicture(file multipart.File, fileHeader *multipart.FileHeader) error {
-	_, err := uu.storageRepository.UploadImage(domain.PROFILE_DIR, file, fileHeader)
+func (uu *userUsecase) UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) error {
+	imageUrl, err := uu.storageRepository.UploadImage(domain.PROFILE_DIR, file, fileHeader)
+	if err != nil {
+		return err
+	}
+
+	err = uu.userRepository.ModifyUserByID(userId, &domain.User{ImageUrl: imageUrl})
 
 	return err
 }

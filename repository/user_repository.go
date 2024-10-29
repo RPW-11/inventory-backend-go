@@ -41,6 +41,12 @@ func (ur *userRepository) GetByID(id string) (domain.User, error) {
 	return user, result.Error
 }
 
+func (ur *userRepository) ModifyUserByID(id string, user *domain.User) error {
+	result := ur.database.Model(&domain.User{ID: id}).Updates(user)
+
+	return result.Error
+}
+
 func (ur *userRepository) Fetch() ([]domain.User, error) {
 	var users []domain.User
 	result := ur.database.Select("id", "email", "position", "full_name", "phone_number", "image_url", "created_at", "updated_at").Find(&users)
