@@ -10,22 +10,26 @@ const (
 )
 
 type User struct {
-	ID        string    `gorm:"column:id;primaryKey" json:"id"`
-	FullName  string    `gorm:"column:full_name" json:"fullName"`
-	Email     string    `gorm:"column:email" json:"email"`
-	Password  string    `gorm:"column:password" json:"password"`
-	Position  string    `gorm:"column:position" json:"position"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	ID          string    `gorm:"column:id;primaryKey" json:"id"`
+	FullName    string    `gorm:"column:full_name" json:"fullName"`
+	Email       string    `gorm:"column:email" json:"email"`
+	Password    string    `gorm:"column:password" json:"password"`
+	Position    string    `gorm:"column:position" json:"position"`
+	PhoneNumber string    `gorm:"column:phone_number" json:"phoneNumber"`
+	ImageUrl    string    `gorm:"column:image_url" json:"imgUrl"`
+	CreatedAt   time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 type Profile struct {
-	ID        string    `gorm:"column:id;primaryKey" json:"id"`
-	FullName  string    `gorm:"column:full_name" json:"fullName"`
-	Email     string    `gorm:"column:email" json:"email"`
-	Position  string    `gorm:"column:position" json:"position"`
-	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
-	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
+	ID          string    `gorm:"column:id;primaryKey" json:"id"`
+	FullName    string    `gorm:"column:full_name" json:"fullName"`
+	Email       string    `gorm:"column:email" json:"email"`
+	Position    string    `gorm:"column:position" json:"position"`
+	PhoneNumber string    `gorm:"column:phone_number" json:"phoneNumber"`
+	ImageUrl    string    `gorm:"column:image_url" json:"imgUrl"`
+	CreatedAt   time.Time `gorm:"column:created_at" json:"createdAt"`
+	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
 
 func (User) TableName() string {

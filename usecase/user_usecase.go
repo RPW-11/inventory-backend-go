@@ -21,12 +21,14 @@ func NewUserUsecase(ur domain.UserRepository, sr domain.StorageRepository) domai
 func (uu *userUsecase) GetProfile(id string) (domain.Profile, error) {
 	user, err := uu.userRepository.GetByID(id)
 	profile := domain.Profile{
-		ID:        user.ID,
-		FullName:  user.FullName,
-		Email:     user.Email,
-		Position:  user.Position,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
+		ID:          user.ID,
+		FullName:    user.FullName,
+		Email:       user.Email,
+		Position:    user.Position,
+		PhoneNumber: user.PhoneNumber,
+		ImageUrl:    user.ImageUrl,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.UpdatedAt,
 	}
 
 	return profile, err

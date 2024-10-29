@@ -31,5 +31,5 @@ func Setup(env *bootstrap.Env, db *gorm.DB, storage *s3.S3, gin *gin.Engine) {
 	NewInventoryRoute(privateRouter, db)
 	NewWarehouseRoute(privateRouter, db)
 	NewProductRoute(privateRouter, db)
-	NewUserRoute(publicRouter, db, env, storage)
+	NewUserRoute(privateRouter, db, env, storage)
 }
