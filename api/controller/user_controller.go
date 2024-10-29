@@ -32,3 +32,24 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 
 	c.JSON(http.StatusOK, users)
 }
+
+func (uc *UserController) UpdateProfilePicture(c *gin.Context) {
+	file, fileHeader, err := c.Request.FormFile("profile_img")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	if fileHeader.Size > 5000000 {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "image must be less than 5 MB"})
+		return
+	}
+
+	err = uc.UserUsecase.UpdateProfilePicture(file, fileHeader)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, domain.Response{Message: "profile updated successfully"})
+}

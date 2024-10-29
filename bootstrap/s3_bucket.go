@@ -4,13 +4,15 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func NewS3Session(env *Env) *s3.S3 {
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String(env.AWS_Region),
+		Region:      aws.String(env.AWS_Region),
+		Credentials: credentials.NewStaticCredentials(env.AWSAccessKeyID, env.AWSSecretAccessKey, ""),
 	})
 
 	if err != nil {

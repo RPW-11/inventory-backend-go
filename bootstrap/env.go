@@ -23,7 +23,9 @@ type Env struct {
 	AccessTokenSecret      string `mapstructure:"ACCESS_TOKEN_SECRET"`
 	RefreshTokenSecret     string `mapstructure:"REFRESH_TOKEN_SECRET"`
 	AWS_Region             string `mapstructure:"AWS_REGION"`
-	S3_BUCKET              string `mapstructure:"S3_BUCKET"`
+	S3Bucket               string `mapstructure:"S3_BUCKET"`
+	AWSAccessKeyID         string `mapstructure:"AWS_ACCESS_KEY_ID"`
+	AWSSecretAccessKey     string `mapstructure:"AWS_SECRET_ACCESS_KEY"`
 }
 
 func NewEnv() *Env {

@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 const (
 	TableUser = "User"
@@ -39,4 +42,5 @@ type UserRepository interface {
 type UserUsecase interface {
 	GetProfile(id string) (Profile, error)
 	GetAllUsers() ([]User, error)
+	UpdateProfilePicture(file multipart.File, fileHeader *multipart.FileHeader) error
 }

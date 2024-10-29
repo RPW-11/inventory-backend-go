@@ -21,6 +21,7 @@ CREATE TABLE "User" (
   "email" varchar(100) NOT NULL,
   "password" varchar(100) NOT NULL,
   "phone_number" varchar(20) NOT NULL,
+  "image_url" varchar(255),
   "created_at" timestamp DEFAULT (now()),
   "updated_at" timestamp DEFAULT (now())
 );

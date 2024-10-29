@@ -1,14 +1,20 @@
 package usecase
 
-import "github.com/RPW-11/inventory_management_be/domain"
+import (
+	"mime/multipart"
+
+	"github.com/RPW-11/inventory_management_be/domain"
+)
 
 type userUsecase struct {
-	userRepository domain.UserRepository
+	userRepository    domain.UserRepository
+	storageRepository domain.StorageRepository
 }
 
-func NewUserUsecase(ur domain.UserRepository) domain.UserUsecase {
+func NewUserUsecase(ur domain.UserRepository, sr domain.StorageRepository) domain.UserUsecase {
 	return &userUsecase{
-		userRepository: ur,
+		userRepository:    ur,
+		storageRepository: sr,
 	}
 }
 
@@ -24,6 +30,12 @@ func (uu *userUsecase) GetProfile(id string) (domain.Profile, error) {
 	}
 
 	return profile, err
+}
+
+func (uu *userUsecase) UpdateProfilePicture(file multipart.File, fileHeader *multipart.FileHeader) error {
+	_, err := uu.storageRepository.UploadImage(domain.PROFILE_DIR, file, fileHeader)
+
+	return err
 }
 
 func (uu *userUsecase) GetAllUsers() ([]domain.User, error) {

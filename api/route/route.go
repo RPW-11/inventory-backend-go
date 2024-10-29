@@ -3,12 +3,13 @@ package route
 import (
 	"github.com/RPW-11/inventory_management_be/api/middleware"
 	"github.com/RPW-11/inventory_management_be/bootstrap"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // register all the available routes
-func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
+func Setup(env *bootstrap.Env, db *gorm.DB, storage *s3.S3, gin *gin.Engine) {
 	// CORS setup
 	cors := middleware.CorsMiddleware(env)
 
@@ -30,5 +31,5 @@ func Setup(env *bootstrap.Env, db *gorm.DB, gin *gin.Engine) {
 	NewInventoryRoute(privateRouter, db)
 	NewWarehouseRoute(privateRouter, db)
 	NewProductRoute(privateRouter, db)
-	NewUserRoute(privateRouter, db)
+	NewUserRoute(publicRouter, db, env, storage)
 }

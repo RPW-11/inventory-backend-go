@@ -14,7 +14,7 @@ func main() {
 	server := gin.Default()
 
 	// set up the routes
-	route.Setup(env, app.Db, server)
+	route.Setup(env, app.Db, app.SVC, server)
 
 	server.Run(env.ServerAddress)
 }
