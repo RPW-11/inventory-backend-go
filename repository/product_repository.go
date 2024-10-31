@@ -68,6 +68,13 @@ func (pr *productRepository) GetImageById(productImageId string) (domain.Product
 	return productImage, result.Error
 }
 
+func (pr *productRepository) GetImagesByProductId(productId string) ([]domain.ProductImage, error) {
+	var productImages []domain.ProductImage
+	result := pr.database.Where("product_id = ?", productId).Find(&productImages)
+
+	return productImages, result.Error
+}
+
 func (pr *productRepository) DeleteImageUrl(productImageId string) error {
 	result := pr.database.Delete(&domain.ProductImage{}, "id = ?", productImageId)
 

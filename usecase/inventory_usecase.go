@@ -11,7 +11,6 @@ type inventoryUsecase struct {
 	inventoryRepository domain.InventoryRepository
 	productRepository   domain.ProductRepository
 	warehouseRepository domain.WarehouseRepository
-	storageRepository   domain.StorageRepository
 }
 
 func NewInventoryUsecase(ir domain.InventoryRepository, pr domain.ProductRepository, wr domain.WarehouseRepository) domain.InventoryUsecase {
@@ -99,6 +98,7 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 		productDetail := domain.ProductDetail{
 			Product:     p,
 			Inventories: []domain.InventoryDetail{},
+			ImageUrls:   []string{},
 		}
 
 		// grab the quantity and query all the warehouse detail
@@ -114,6 +114,16 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 				WarehouseAddress: warehouse.Address,
 				ProductQuantity:  i.Quantity,
 			})
+		}
+
+		// grab all of the images
+		images, err := iu.productRepository.GetImagesByProductId(p.ID)
+		if err != nil {
+			return productDetails, err
+		}
+
+		for _, img := range images {
+			productDetail.ImageUrls = append(productDetail.ImageUrls, img.ImageUrl)
 		}
 
 		// append the product detail to the array

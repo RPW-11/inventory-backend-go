@@ -41,6 +41,7 @@ type ProductRepository interface {
 	AddImageUrl(productId, imgUrl string) error
 	DeleteImageUrl(productImageId string) error
 	GetImageById(productImageId string) (ProductImage, error)
+	GetImagesByProductId(productId string) ([]ProductImage, error)
 }
 
 type ProductUsecase interface {

@@ -41,6 +41,7 @@ type UpdateQuantityRequest struct {
 type ProductDetail struct {
 	Product     Product           `json:"product"`
 	Inventories []InventoryDetail `json:"inventories"`
+	ImageUrls   []string          `json:"imageUrls"`
 }
 
 type InventoryDetail struct {
