@@ -39,6 +39,8 @@ type ProductRepository interface {
 	GetByID(id string) (Product, error)
 	Fetch(name string) ([]Product, error)
 	AddImageUrl(productId, imgUrl string) error
+	DeleteImageUrl(productImageId string) error
+	GetImageById(productImageId string) (ProductImage, error)
 }
 
 type ProductUsecase interface {
@@ -46,4 +48,5 @@ type ProductUsecase interface {
 	GetByID(id string) (Product, error)
 	Fetch(name string) ([]Product, error)
 	AddProductImages(fileHeaders []*multipart.FileHeader, productId string) error
+	DeleteProductImage(productImageId string) error
 }

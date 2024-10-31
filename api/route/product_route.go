@@ -20,4 +20,5 @@ func NewProductRoute(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB, st
 
 	group.GET("/product", pc.GetAllProducts)
 	group.POST("/product-images/:id", pc.UploadProductImages)
+	group.DELETE("/product-image/:id", pc.DeleteProductImage)
 }

@@ -55,3 +55,23 @@ func (pu *productUsecase) AddProductImages(fileHeaders []*multipart.FileHeader, 
 	}
 	return nil
 }
+
+func (pu *productUsecase) DeleteProductImage(productImageId string) error {
+	// check if the product image exists
+	productImage, err := pu.productRepository.GetImageById(productImageId)
+	if err != nil {
+		return err
+	}
+
+	// delete from bucket
+	fileName := productImage.ImageUrl[strings.LastIndex(productImage.ImageUrl, "/")+1:]
+	err = pu.storageRepository.DeleteImage(domain.IMAGE_DIR, fileName)
+	if err != nil {
+		return err
+	}
+
+	// delete from the db
+	err = pu.productRepository.DeleteImageUrl(productImageId)
+
+	return err
+}

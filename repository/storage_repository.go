@@ -42,6 +42,17 @@ func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHe
 	return imageUrl, nil
 }
 
-func (sr *storageRepository) DeleteImage(fileName string) error {
+func (sr *storageRepository) DeleteImage(dir, fileName string) error {
+	key := dir + "/" + fileName
+	input := &s3.DeleteObjectInput{
+		Bucket: aws.String(sr.env.S3Bucket),
+		Key:    aws.String(key),
+	}
+
+	_, err := sr.storage.DeleteObject(input)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -56,3 +56,20 @@ func (pr *productRepository) AddImageUrl(productId, imgUrl string) error {
 
 	return result.Error
 }
+
+func (pr *productRepository) GetImageById(productImageId string) (domain.ProductImage, error) {
+	var productImage domain.ProductImage
+	result := pr.database.Where("id = ?", productImageId).Find(&productImage)
+
+	if result.RowsAffected == 0 {
+		return productImage, fmt.Errorf("no existing product's image")
+	}
+
+	return productImage, result.Error
+}
+
+func (pr *productRepository) DeleteImageUrl(productImageId string) error {
+	result := pr.database.Delete(&domain.ProductImage{}, "id = ?", productImageId)
+
+	return result.Error
+}

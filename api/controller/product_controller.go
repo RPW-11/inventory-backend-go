@@ -65,3 +65,23 @@ func (pc *ProductController) UploadProductImages(c *gin.Context) {
 
 	c.JSON(http.StatusOK, domain.Response{Message: "successfully add the product images"})
 }
+
+func (pc *ProductController) DeleteProductImage(c *gin.Context) {
+	productImageId := c.Param("id")
+	if productImageId == "" {
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: "product's image id can't be empty"})
+		return
+	}
+
+	err := pc.ProductUsecase.DeleteProductImage(productImageId)
+	if err != nil {
+		if err.Error() == "no existing product's image" {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "product's image doesn't exist"})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{Message: "product's image has been deleted successfully"})
+}
