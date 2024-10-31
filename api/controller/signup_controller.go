@@ -43,11 +43,12 @@ func (sc *SignupController) Signup(c *gin.Context) {
 	request.Password = string(encryptedPassword)
 
 	user := domain.User{
-		ID:       uuid.NewString(),
-		FullName: request.FullName,
-		Email:    request.Email,
-		Position: "Staff",
-		Password: request.Password,
+		ID:          uuid.NewString(),
+		FullName:    request.FullName,
+		Email:       request.Email,
+		Position:    "Staff",
+		Password:    request.Password,
+		PhoneNumber: request.PhoneNumber,
 	}
 
 	err = sc.SignupUsecase.Create(&user)

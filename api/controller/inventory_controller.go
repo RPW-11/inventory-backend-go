@@ -15,6 +15,7 @@ type InventoryController struct {
 
 func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 	var request domain.CreateInventoryRequest
+
 	err := c.ShouldBind(&request)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
@@ -40,16 +41,11 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 		Price:       request.ProductPrice,
 	}
 
-	for _, warehouse := range request.Warehouses {
-		err = ic.InventoryUsecase.CreateProductInventory(&product, warehouse.WarehouseID, warehouse.ProductQuantity)
-		if err != nil {
-			break
-		}
-	}
+	productId, err := ic.InventoryUsecase.CreateProductInventory(&product, request.Warehouses)
 
 	if err == nil {
-		c.JSON(http.StatusOK, domain.Response{
-			Message: "Inventory created successfully",
+		c.JSON(http.StatusOK, domain.CreateInventoryResponse{
+			ProductID: productId,
 		})
 		return
 	}

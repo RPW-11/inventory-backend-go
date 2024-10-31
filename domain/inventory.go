@@ -17,15 +17,21 @@ type Inventory struct {
 	UpdatedAt   time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
 
+type WarehouseQuantity struct {
+	WarehouseID     string `json:"warehouseId" binding:"required"`
+	ProductQuantity int    `json:"productQuantity" binding:"required"`
+}
+
 type CreateInventoryRequest struct {
-	ProductID          string  `json:"productId"`
-	ProductName        string  `json:"productName" binding:"required"`
-	ProductDescription string  `json:"productDescription" binding:"required"`
-	ProductPrice       float64 `json:"productPrice" binding:"required"`
-	Warehouses         []struct {
-		WarehouseID     string `json:"warehouseId" binding:"required"`
-		ProductQuantity int    `json:"productQuantity" binding:"required"`
-	} `json:"warehouses" binding:"required"`
+	ProductID          string              `json:"productId"`
+	ProductName        string              `json:"productName" binding:"required"`
+	ProductDescription string              `json:"productDescription" binding:"required"`
+	ProductPrice       float64             `json:"productPrice" binding:"required"`
+	Warehouses         []WarehouseQuantity `json:"warehouses" binding:"required"`
+}
+
+type CreateInventoryResponse struct {
+	ProductID string `json:"productId"`
 }
 
 type UpdateQuantityRequest struct {
@@ -58,7 +64,7 @@ type InventoryRepository interface {
 }
 
 type InventoryUsecase interface {
-	CreateProductInventory(product *Product, warehouseID string, quantity int) error
+	CreateProductInventory(product *Product, warehouses []WarehouseQuantity) (string, error)
 	GetByID(id int) (Inventory, error)
 	GetProductDetails() ([]ProductDetail, error)
 	ModifyByID(inventoryID int, inventory *Inventory) error

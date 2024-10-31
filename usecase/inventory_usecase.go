@@ -11,6 +11,7 @@ type inventoryUsecase struct {
 	inventoryRepository domain.InventoryRepository
 	productRepository   domain.ProductRepository
 	warehouseRepository domain.WarehouseRepository
+	storageRepository   domain.StorageRepository
 }
 
 func NewInventoryUsecase(ir domain.InventoryRepository, pr domain.ProductRepository, wr domain.WarehouseRepository) domain.InventoryUsecase {
@@ -21,49 +22,61 @@ func NewInventoryUsecase(ir domain.InventoryRepository, pr domain.ProductReposit
 	}
 }
 
-func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, warehouseID string, quantity int) error {
-	// check if warehouse exists
-	_, err := iu.warehouseRepository.GetByID(warehouseID)
-	if err != nil {
-		return err
+func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, warehouses []domain.WarehouseQuantity) (string, error) {
+	// check if all warehouses exists
+	for _, w := range warehouses {
+		_, err := iu.warehouseRepository.GetByID(w.WarehouseID)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	// check if the product exists
-	_, err = iu.productRepository.GetByID(product.ID)
+	_, err := iu.productRepository.GetByID(product.ID)
 	if err != nil {
 		if err.Error() != "no existing product" {
-			return err
+			return "", err
 		}
 		// create a product
 		product.ID = uuid.NewString()
 		iu.productRepository.Create(product)
 	}
 
-	// check if the inventory exists
-	existingInventory, err := iu.inventoryRepository.GetByProductWarehouseID(product.ID, warehouseID)
-	if err != nil {
-		if err.Error() != "no existing inventory" {
-			return err
+	// insert product to the inventories
+	for _, w := range warehouses {
+		// check if the inventory exists
+		existingInventory, err := iu.inventoryRepository.GetByProductWarehouseID(product.ID, w.WarehouseID)
+		if err != nil {
+			if err.Error() != "no existing inventory" {
+				return "", err
+			}
+			// create the inventory
+			inventory := domain.Inventory{
+				Quantity:    w.ProductQuantity,
+				ProductId:   product.ID,
+				WarehouseId: w.WarehouseID,
+			}
+
+			err = iu.inventoryRepository.Create(&inventory)
+			if err != nil {
+				return "", err
+			}
+		} else {
+			existingInventory.Quantity += w.ProductQuantity
+			newInventory := domain.Inventory{
+				ProductId:   existingInventory.ProductId,
+				WarehouseId: existingInventory.WarehouseId,
+				Quantity:    existingInventory.Quantity,
+				UpdatedAt:   time.Now(),
+			}
+			err = iu.inventoryRepository.ModifyByID(existingInventory.ID, &newInventory)
+			if err != nil {
+				return "", err
+			}
 		}
-		// create the inventory
-		inventory := domain.Inventory{
-			Quantity:    quantity,
-			ProductId:   product.ID,
-			WarehouseId: warehouseID,
-		}
-		err = iu.inventoryRepository.Create(&inventory)
-	} else {
-		existingInventory.Quantity += quantity
-		newInventory := domain.Inventory{
-			ProductId:   existingInventory.ProductId,
-			WarehouseId: existingInventory.WarehouseId,
-			Quantity:    existingInventory.Quantity,
-			UpdatedAt:   time.Now(),
-		}
-		err = iu.inventoryRepository.ModifyByID(existingInventory.ID, &newInventory)
 	}
 
-	return err
+	return product.ID, nil
 }
 
 func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, error) {

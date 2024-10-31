@@ -28,7 +28,7 @@ func Setup(env *bootstrap.Env, db *gorm.DB, storage *s3.S3, gin *gin.Engine) {
 	jwtMiddleware := middleware.JwtAuthMiddleware(env.AccessTokenSecret)
 	privateRouter := router.Group("")
 	privateRouter.Use(jwtMiddleware)
-	NewInventoryRoute(privateRouter, db)
+	NewInventoryRoute(privateRouter, env, db)
 	NewWarehouseRoute(privateRouter, db)
 	NewProductRoute(privateRouter, db)
 	NewUserRoute(privateRouter, db, env, storage)

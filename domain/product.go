@@ -3,7 +3,8 @@ package domain
 import "time"
 
 const (
-	TableProduct = "Product"
+	TableProduct      = "Product"
+	TableProductImage = "ProductImage"
 )
 
 type Product struct {
@@ -19,10 +20,22 @@ func (Product) TableName() string {
 	return TableProduct
 }
 
+type ProductImage struct {
+	ID        int       `gorm:"column:id;primaryKey" json:"id"`
+	ProductID string    `gorm:"column:id" json:"productId"`
+	ImageUrl  string    `gorm:"column:image_url" json:"imageUrl"`
+	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
+}
+
+func (ProductImage) TableName() string {
+	return TableProductImage
+}
+
 type ProductRepository interface {
 	Create(product *Product) error
 	GetByID(id string) (Product, error)
 	Fetch(name string) ([]Product, error)
+	AddImageUrl(productId, imgUrl string) error
 }
 
 type ProductUsecase interface {

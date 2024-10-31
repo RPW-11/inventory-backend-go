@@ -45,3 +45,14 @@ func (pr *productRepository) Fetch(name string) ([]domain.Product, error) {
 
 	return products, result.Error
 }
+
+func (pr *productRepository) AddImageUrl(productId, imgUrl string) error {
+	productImage := domain.ProductImage{
+		ProductID: productId,
+		ImageUrl:  imgUrl,
+	}
+
+	result := pr.database.Create(productImage)
+
+	return result.Error
+}
