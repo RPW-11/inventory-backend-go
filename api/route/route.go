@@ -30,6 +30,6 @@ func Setup(env *bootstrap.Env, db *gorm.DB, storage *s3.S3, gin *gin.Engine) {
 	privateRouter.Use(jwtMiddleware)
 	NewInventoryRoute(privateRouter, env, db)
 	NewWarehouseRoute(privateRouter, db)
-	NewProductRoute(privateRouter, db)
+	NewProductRoute(privateRouter, env, db, storage)
 	NewUserRoute(privateRouter, db, env, storage)
 }

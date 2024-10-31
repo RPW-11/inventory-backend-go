@@ -52,7 +52,7 @@ func (pr *productRepository) AddImageUrl(productId, imgUrl string) error {
 		ImageUrl:  imgUrl,
 	}
 
-	result := pr.database.Create(productImage)
+	result := pr.database.Create(&productImage)
 
 	return result.Error
 }

@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"mime/multipart"
+	"time"
+)
 
 const (
 	TableProduct      = "Product"
@@ -22,7 +25,7 @@ func (Product) TableName() string {
 
 type ProductImage struct {
 	ID        int       `gorm:"column:id;primaryKey" json:"id"`
-	ProductID string    `gorm:"column:id" json:"productId"`
+	ProductID string    `gorm:"column:product_id" json:"productId"`
 	ImageUrl  string    `gorm:"column:image_url" json:"imageUrl"`
 	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
 }
@@ -42,4 +45,5 @@ type ProductUsecase interface {
 	Create(product *Product) error
 	GetByID(id string) (Product, error)
 	Fetch(name string) ([]Product, error)
+	AddProductImages(fileHeaders []*multipart.FileHeader, productId string) error
 }
