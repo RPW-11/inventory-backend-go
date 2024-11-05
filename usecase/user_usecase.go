@@ -18,7 +18,7 @@ func NewUserUsecase(ur domain.UserRepository, sr domain.StorageRepository) domai
 	}
 }
 
-func (uu *userUsecase) GetProfile(id string) (domain.Profile, error) {
+func (uu *userUsecase) GetProfile(id string) (domain.Profile, *domain.CustomError) {
 	user, err := uu.userRepository.GetByID(id)
 	profile := domain.Profile{
 		ID:          user.ID,
@@ -34,7 +34,7 @@ func (uu *userUsecase) GetProfile(id string) (domain.Profile, error) {
 	return profile, err
 }
 
-func (uu *userUsecase) UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) error {
+func (uu *userUsecase) UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) *domain.CustomError {
 	imageUrl, err := uu.storageRepository.UploadImage(domain.PROFILE_DIR, file, fileHeader)
 	if err != nil {
 		return err
@@ -45,6 +45,6 @@ func (uu *userUsecase) UpdateProfilePicture(userId string, file multipart.File, 
 	return err
 }
 
-func (uu *userUsecase) GetAllUsers() ([]domain.User, error) {
+func (uu *userUsecase) GetAllUsers() ([]domain.User, *domain.CustomError) {
 	return uu.userRepository.Fetch()
 }

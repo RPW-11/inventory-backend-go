@@ -12,8 +12,8 @@ type SignupResponse struct {
 }
 
 type SignupUsecase interface {
-	Create(user *User) error
-	GetUserByEmail(email string) (User, error)
-	CreateAccessToken(user *User, secret string, expiry int) (string, error)
-	CreateRefreshToken(user *User, secret string, expiry int) (string, error)
+	Create(user *User) *CustomError
+	GetUserByEmail(email string) (User, *CustomError)
+	CreateAccessToken(user *User, secret string, expiry int) (string, *CustomError)
+	CreateRefreshToken(user *User, secret string, expiry int) (string, *CustomError)
 }

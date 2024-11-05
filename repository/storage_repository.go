@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 	"mime/multipart"
+	"net/http"
 
 	"github.com/RPW-11/inventory_management_be/bootstrap"
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -22,7 +23,7 @@ func NewStorageRepository(env *bootstrap.Env, storage *s3.S3) domain.StorageRepo
 	}
 }
 
-func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHeader *multipart.FileHeader) (string, error) {
+func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHeader *multipart.FileHeader) (string, *domain.CustomError) {
 	key := dir + fileHeader.Filename
 	input := &s3.PutObjectInput{
 		Bucket:        aws.String(sr.env.S3Bucket),
@@ -34,7 +35,7 @@ func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHe
 
 	_, err := sr.storage.PutObject(input)
 	if err != nil {
-		return "", err
+		return "", domain.NewCustomError(err.Error(), http.StatusInternalServerError)
 	}
 
 	imageUrl := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", sr.env.S3Bucket, key)
@@ -42,7 +43,7 @@ func (sr *storageRepository) UploadImage(dir string, file multipart.File, fileHe
 	return imageUrl, nil
 }
 
-func (sr *storageRepository) DeleteImage(dir, fileName string) error {
+func (sr *storageRepository) DeleteImage(dir, fileName string) *domain.CustomError {
 	key := dir + "/" + fileName
 	input := &s3.DeleteObjectInput{
 		Bucket: aws.String(sr.env.S3Bucket),
@@ -51,7 +52,7 @@ func (sr *storageRepository) DeleteImage(dir, fileName string) error {
 
 	_, err := sr.storage.DeleteObject(input)
 	if err != nil {
-		return err
+		return domain.NewCustomError(err.Error(), http.StatusInternalServerError)
 	}
 
 	return nil

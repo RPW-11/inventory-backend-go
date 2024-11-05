@@ -25,8 +25,8 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		return
 	}
 
-	_, err = sc.SignupUsecase.GetUserByEmail(request.Email)
-	if err == nil {
+	_, custErr := sc.SignupUsecase.GetUserByEmail(request.Email)
+	if custErr == nil {
 		c.JSON(http.StatusConflict, domain.Response{Message: "User already exists with the given email"})
 		return
 	}
@@ -51,21 +51,21 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		PhoneNumber: request.PhoneNumber,
 	}
 
-	err = sc.SignupUsecase.Create(&user)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr = sc.SignupUsecase.Create(&user)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	accessToken, err := sc.SignupUsecase.CreateAccessToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	accessToken, custErr := sc.SignupUsecase.CreateAccessToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiryHour)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	refreshToken, err := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.RefreshTokenSecret, sc.Env.RefreshTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	refreshToken, custErr := sc.SignupUsecase.CreateRefreshToken(&user, sc.Env.RefreshTokenSecret, sc.Env.RefreshTokenExpiryHour)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

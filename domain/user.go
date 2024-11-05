@@ -37,15 +37,15 @@ func (User) TableName() string {
 }
 
 type UserRepository interface {
-	Create(user *User) error
-	GetByEmail(email string) (User, error)
-	GetByID(id string) (User, error)
-	ModifyUserByID(id string, user *User) error
-	Fetch() ([]User, error)
+	Create(user *User) *CustomError
+	GetByEmail(email string) (User, *CustomError)
+	GetByID(id string) (User, *CustomError)
+	ModifyUserByID(id string, user *User) *CustomError
+	Fetch() ([]User, *CustomError)
 }
 
 type UserUsecase interface {
-	GetProfile(id string) (Profile, error)
-	GetAllUsers() ([]User, error)
-	UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) error
+	GetProfile(id string) (Profile, *CustomError)
+	GetAllUsers() ([]User, *CustomError)
+	UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) *CustomError
 }

@@ -8,6 +8,6 @@ const (
 )
 
 type StorageRepository interface {
-	UploadImage(dir string, file multipart.File, fileHeader *multipart.FileHeader) (string, error)
-	DeleteImage(dir, fileName string) error
+	UploadImage(dir string, file multipart.File, fileHeader *multipart.FileHeader) (string, *CustomError)
+	DeleteImage(dir, fileName string) *CustomError
 }
