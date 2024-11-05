@@ -24,26 +24,26 @@ func (lc *LoginController) Login(c *gin.Context) {
 		return
 	}
 
-	user, err := lc.LoginUsecase.GetUserByEmail(request.Email)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "User with this email doesn't exist"})
+	user, custErr := lc.LoginUsecase.GetUserByEmail(request.Email)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)) != nil {
-		c.JSON(http.StatusUnauthorized, domain.Response{Message: "Invalid credentials"})
+		c.JSON(http.StatusUnauthorized, domain.Response{Message: "invalid credentials"})
 		return
 	}
 
-	accessToken, err := lc.LoginUsecase.CreateAccessToken(&user, lc.Env.AccessTokenSecret, lc.Env.AccessTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	accessToken, custErr := lc.LoginUsecase.CreateAccessToken(&user, lc.Env.AccessTokenSecret, lc.Env.AccessTokenExpiryHour)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	refreshToken, err := lc.LoginUsecase.CreateRefreshToken(&user, lc.Env.RefreshTokenSecret, lc.Env.RefreshTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	refreshToken, custErr := lc.LoginUsecase.CreateRefreshToken(&user, lc.Env.RefreshTokenSecret, lc.Env.RefreshTokenExpiryHour)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

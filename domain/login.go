@@ -10,7 +10,7 @@ type LoginResponse struct {
 }
 
 type LoginUsecase interface {
-	GetUserByEmail(email string) (User, error)
-	CreateAccessToken(user *User, secret string, expiry int) (string, error)
-	CreateRefreshToken(user *User, secret string, expiry int) (string, error)
+	GetUserByEmail(email string) (User, *CustomError)
+	CreateAccessToken(user *User, secret string, expiry int) (string, *CustomError)
+	CreateRefreshToken(user *User, secret string, expiry int) (string, *CustomError)
 }
