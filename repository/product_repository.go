@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"fmt"
+	"net/http"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"gorm.io/gorm"
@@ -17,23 +17,32 @@ func NewProductRepository(db *gorm.DB) domain.ProductRepository {
 	}
 }
 
-func (pr *productRepository) Create(product *domain.Product) error {
+func (pr *productRepository) Create(product *domain.Product) *domain.CustomError {
 	result := pr.database.Create(product)
-	return result.Error
+
+	if result.Error != nil {
+		return domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return nil
 }
 
-func (pr *productRepository) GetByID(id string) (domain.Product, error) {
+func (pr *productRepository) GetByID(id string) (domain.Product, *domain.CustomError) {
 	var product domain.Product
 	result := pr.database.Where("id = ?", id).Find(&product)
 
 	if result.RowsAffected == 0 {
-		return product, fmt.Errorf("no existing product")
+		return product, domain.NewCustomError("product doesn't exists", http.StatusBadRequest)
 	}
 
-	return product, result.Error
+	if result.Error != nil {
+		return product, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return product, nil
 }
 
-func (pr *productRepository) Fetch(name string) ([]domain.Product, error) {
+func (pr *productRepository) Fetch(name string) ([]domain.Product, *domain.CustomError) {
 	var products []domain.Product
 	query := pr.database.Model(&products)
 
@@ -43,10 +52,14 @@ func (pr *productRepository) Fetch(name string) ([]domain.Product, error) {
 
 	result := query.Find(&products)
 
-	return products, result.Error
+	if result.Error != nil {
+		return products, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return products, nil
 }
 
-func (pr *productRepository) AddImageUrl(productId, imgUrl string) error {
+func (pr *productRepository) AddImageUrl(productId, imgUrl string) *domain.CustomError {
 	productImage := domain.ProductImage{
 		ProductID: productId,
 		ImageUrl:  imgUrl,
@@ -54,29 +67,49 @@ func (pr *productRepository) AddImageUrl(productId, imgUrl string) error {
 
 	result := pr.database.Create(&productImage)
 
-	return result.Error
+	if result.Error != nil {
+		return domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return nil
 }
 
-func (pr *productRepository) GetImageById(productImageId string) (domain.ProductImage, error) {
+func (pr *productRepository) GetImageById(productImageId string) (domain.ProductImage, *domain.CustomError) {
 	var productImage domain.ProductImage
 	result := pr.database.Where("id = ?", productImageId).Find(&productImage)
 
 	if result.RowsAffected == 0 {
-		return productImage, fmt.Errorf("no existing product's image")
+		return productImage, domain.NewCustomError("product's image(s) doesn't exist", http.StatusBadRequest)
 	}
 
-	return productImage, result.Error
+	if result.Error != nil {
+		return productImage, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return productImage, nil
 }
 
-func (pr *productRepository) GetImagesByProductId(productId string) ([]domain.ProductImage, error) {
+func (pr *productRepository) GetImagesByProductId(productId string) ([]domain.ProductImage, *domain.CustomError) {
 	var productImages []domain.ProductImage
 	result := pr.database.Where("product_id = ?", productId).Find(&productImages)
 
-	return productImages, result.Error
+	if result.Error != nil {
+		return productImages, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return productImages, nil
 }
 
-func (pr *productRepository) DeleteImageUrl(productImageId string) error {
+func (pr *productRepository) DeleteImageUrl(productImageId string) *domain.CustomError {
 	result := pr.database.Delete(&domain.ProductImage{}, "id = ?", productImageId)
 
-	return result.Error
+	if result.RowsAffected == 0 {
+		return domain.NewCustomError("invalid product image id", http.StatusBadRequest)
+	}
+
+	if result.Error != nil {
+		return domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return nil
 }

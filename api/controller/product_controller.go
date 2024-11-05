@@ -15,9 +15,9 @@ type ProductController struct {
 func (pc *ProductController) GetAllProducts(c *gin.Context) {
 	productName := c.Query("name")
 
-	products, err := pc.ProductUsecase.Fetch(productName)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	products, custErr := pc.ProductUsecase.Fetch(productName)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -37,15 +37,10 @@ func (pc *ProductController) UploadProductImages(c *gin.Context) {
 		return
 	}
 
-	_, err = pc.ProductUsecase.GetByID(productId)
-	if err != nil {
-		if err.Error() == "no existing product" {
-			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid product id"})
-			return
-		} else {
-			c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
-			return
-		}
+	_, custErr := pc.ProductUsecase.GetByID(productId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
+		return
 	}
 
 	form := c.Request.MultipartForm
@@ -57,9 +52,9 @@ func (pc *ProductController) UploadProductImages(c *gin.Context) {
 		return
 	}
 
-	err = pc.ProductUsecase.AddProductImages(imgFiles, productId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr = pc.ProductUsecase.AddProductImages(imgFiles, productId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -69,17 +64,13 @@ func (pc *ProductController) UploadProductImages(c *gin.Context) {
 func (pc *ProductController) DeleteProductImage(c *gin.Context) {
 	productImageId := c.Param("id")
 	if productImageId == "" {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: "product's image id can't be empty"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "product's image id can't be empty"})
 		return
 	}
 
-	err := pc.ProductUsecase.DeleteProductImage(productImageId)
-	if err != nil {
-		if err.Error() == "no existing product's image" {
-			c.JSON(http.StatusBadRequest, domain.Response{Message: "product's image doesn't exist"})
-			return
-		}
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr := pc.ProductUsecase.DeleteProductImage(productImageId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

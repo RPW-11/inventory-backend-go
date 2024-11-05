@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"mime/multipart"
+	"net/http"
 	"strings"
 
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -20,43 +21,44 @@ func NewProductUsecase(pr domain.ProductRepository, sr domain.StorageRepository)
 	}
 }
 
-func (pu *productUsecase) Create(product *domain.Product) error {
+func (pu *productUsecase) Create(product *domain.Product) *domain.CustomError {
 	return pu.productRepository.Create(product)
 }
 
-func (pu *productUsecase) GetByID(id string) (domain.Product, error) {
+func (pu *productUsecase) GetByID(id string) (domain.Product, *domain.CustomError) {
 	return pu.productRepository.GetByID(id)
 }
 
-func (pu *productUsecase) Fetch(name string) ([]domain.Product, error) {
+func (pu *productUsecase) Fetch(name string) ([]domain.Product, *domain.CustomError) {
 	return pu.productRepository.Fetch(name)
 }
 
-func (pu *productUsecase) AddProductImages(fileHeaders []*multipart.FileHeader, productId string) error {
+func (pu *productUsecase) AddProductImages(fileHeaders []*multipart.FileHeader, productId string) *domain.CustomError {
 	for _, fileHeader := range fileHeaders {
 		file, err := fileHeader.Open()
 		if err != nil {
-			return err
+			return domain.NewCustomError(err.Error(), http.StatusBadRequest)
 		}
 
 		defer file.Close()
 
 		contentType := fileHeader.Header.Get("Content-Type")
 		fileHeader.Filename = uuid.NewString() + "." + strings.Split(contentType, "/")[1]
-		imgUrl, err := pu.storageRepository.UploadImage(domain.IMAGE_DIR, file, fileHeader)
-		if err != nil {
-			return err
+
+		imgUrl, custErr := pu.storageRepository.UploadImage(domain.IMAGE_DIR, file, fileHeader)
+		if custErr != nil {
+			return custErr
 		}
 
-		err = pu.productRepository.AddImageUrl(productId, imgUrl)
-		if err != nil {
-			return err
+		custErr = pu.productRepository.AddImageUrl(productId, imgUrl)
+		if custErr != nil {
+			return custErr
 		}
 	}
 	return nil
 }
 
-func (pu *productUsecase) DeleteProductImage(productImageId string) error {
+func (pu *productUsecase) DeleteProductImage(productImageId string) *domain.CustomError {
 	// check if the product image exists
 	productImage, err := pu.productRepository.GetImageById(productImageId)
 	if err != nil {

@@ -35,19 +35,19 @@ func (ProductImage) TableName() string {
 }
 
 type ProductRepository interface {
-	Create(product *Product) error
-	GetByID(id string) (Product, error)
-	Fetch(name string) ([]Product, error)
-	AddImageUrl(productId, imgUrl string) error
-	DeleteImageUrl(productImageId string) error
-	GetImageById(productImageId string) (ProductImage, error)
-	GetImagesByProductId(productId string) ([]ProductImage, error)
+	Create(product *Product) *CustomError
+	GetByID(id string) (Product, *CustomError)
+	Fetch(name string) ([]Product, *CustomError)
+	AddImageUrl(productId, imgUrl string) *CustomError
+	DeleteImageUrl(productImageId string) *CustomError
+	GetImageById(productImageId string) (ProductImage, *CustomError)
+	GetImagesByProductId(productId string) ([]ProductImage, *CustomError)
 }
 
 type ProductUsecase interface {
-	Create(product *Product) error
-	GetByID(id string) (Product, error)
-	Fetch(name string) ([]Product, error)
-	AddProductImages(fileHeaders []*multipart.FileHeader, productId string) error
-	DeleteProductImage(productImageId string) error
+	Create(product *Product) *CustomError
+	GetByID(id string) (Product, *CustomError)
+	Fetch(name string) ([]Product, *CustomError)
+	AddProductImages(fileHeaders []*multipart.FileHeader, productId string) *CustomError
+	DeleteProductImage(productImageId string) *CustomError
 }
