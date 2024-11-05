@@ -5,8 +5,8 @@ type RefreshTokenResponse struct {
 }
 
 type RefreshTokenUsecase interface {
-	GetUserByID(id string) (User, error)
-	CreateAccessToken(user *User, secret string, expiry int) (accessToken string, err error)
-	CreateRefreshToken(user *User, secret string, expiry int) (refreshToken string, err error)
-	ExtractPositionIDFromToken(requestToken string, secret string) (string, string, error)
+	GetUserByID(id string) (User, *CustomError)
+	CreateAccessToken(user *User, secret string, expiry int) (string, *CustomError)
+	CreateRefreshToken(user *User, secret string, expiry int) (string, *CustomError)
+	ExtractPositionIDFromToken(requestToken string, secret string) (string, string, *CustomError)
 }

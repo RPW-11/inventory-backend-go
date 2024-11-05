@@ -21,21 +21,21 @@ func (rtc *RefreshTokenController) RefreshToken(c *gin.Context) {
 		return
 	}
 
-	id, _, err := rtc.RefreshTokenUsecase.ExtractPositionIDFromToken(currentRefreshToken, rtc.Env.RefreshTokenSecret)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.Response{Message: "Invalid refresh token"})
+	id, _, custErr := rtc.RefreshTokenUsecase.ExtractPositionIDFromToken(currentRefreshToken, rtc.Env.RefreshTokenSecret)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	user, err := rtc.RefreshTokenUsecase.GetUserByID(id)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, domain.Response{Message: "User not found"})
+	user, custErr := rtc.RefreshTokenUsecase.GetUserByID(id)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	accessToken, err := rtc.RefreshTokenUsecase.CreateAccessToken(&user, rtc.Env.AccessTokenSecret, rtc.Env.AccessTokenExpiryHour)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	accessToken, custErr := rtc.RefreshTokenUsecase.CreateAccessToken(&user, rtc.Env.AccessTokenSecret, rtc.Env.AccessTokenExpiryHour)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
