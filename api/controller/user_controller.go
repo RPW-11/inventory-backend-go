@@ -15,9 +15,9 @@ type UserController struct {
 func (uc *UserController) GetUserProfile(c *gin.Context) {
 	userId := c.GetString("x-user-id")
 
-	profile, err := uc.UserUsecase.GetProfile(userId)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	profile, custErr := uc.UserUsecase.GetProfile(userId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -25,9 +25,9 @@ func (uc *UserController) GetUserProfile(c *gin.Context) {
 }
 
 func (uc *UserController) GetAllUsers(c *gin.Context) {
-	users, err := uc.UserUsecase.GetAllUsers()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	users, custErr := uc.UserUsecase.GetAllUsers()
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -57,9 +57,9 @@ func (uc *UserController) UpdateProfilePicture(c *gin.Context) {
 	userId := c.GetString("x-user-id")
 	fileHeader.Filename = userId + "." + strings.Split(contentType, "/")[1]
 
-	err = uc.UserUsecase.UpdateProfilePicture(userId, file, fileHeader)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr := uc.UserUsecase.UpdateProfilePicture(userId, file, fileHeader)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

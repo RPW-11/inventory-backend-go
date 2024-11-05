@@ -57,16 +57,16 @@ func (Inventory) TableName() string {
 }
 
 type InventoryRepository interface {
-	Create(inventory *Inventory) error
-	GetByID(id int) (Inventory, error)
-	GetByProductWarehouseID(productID, warehouseID string) (Inventory, error)
-	ModifyByID(inventoryID int, inventory *Inventory) error
-	GetByProductID(productID string) ([]Inventory, error)
+	Create(inventory *Inventory) *CustomError
+	GetByID(id int) (Inventory, *CustomError)
+	GetByProductWarehouseID(productID, warehouseID string) (Inventory, *CustomError)
+	ModifyByID(inventoryID int, inventory *Inventory) *CustomError
+	GetByProductID(productID string) ([]Inventory, *CustomError)
 }
 
 type InventoryUsecase interface {
-	CreateProductInventory(product *Product, warehouses []WarehouseQuantity) (string, error)
-	GetByID(id int) (Inventory, error)
-	GetProductDetails() ([]ProductDetail, error)
-	ModifyByID(inventoryID int, inventory *Inventory) error
+	CreateProductInventory(product *Product, warehouses []WarehouseQuantity) (string, *CustomError)
+	GetByID(id int) (Inventory, *CustomError)
+	GetProductDetails() ([]ProductDetail, *CustomError)
+	ModifyByID(inventoryID int, inventory *Inventory) *CustomError
 }

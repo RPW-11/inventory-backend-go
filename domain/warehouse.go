@@ -19,16 +19,16 @@ func (Warehouse) TableName() string {
 }
 
 type WarehouseRepository interface {
-	Create(warehouse *Warehouse) error
-	GetByID(warehouseID string) (Warehouse, error)
-	ModifyByID(warehouseID string, warehouse *Warehouse) error
-	DeleteByID(warehouseID string) error
-	Fetch(name string) ([]Warehouse, error)
+	Create(warehouse *Warehouse) *CustomError
+	GetByID(warehouseID string) (Warehouse, *CustomError)
+	ModifyByID(warehouseID string, warehouse *Warehouse) *CustomError
+	DeleteByID(warehouseID string) *CustomError
+	Fetch(name string) ([]Warehouse, *CustomError)
 }
 
 type WarehouseUsecase interface {
-	Create(warehouse *Warehouse) error
-	ModifyByID(warehouseID string, warehouse *Warehouse) error
-	DeleteByID(warehouseID string) error
-	Fetch(name string) ([]Warehouse, error)
+	Create(warehouse *Warehouse) *CustomError
+	ModifyByID(warehouseID string, warehouse *Warehouse) *CustomError
+	DeleteByID(warehouseID string) *CustomError
+	Fetch(name string) ([]Warehouse, *CustomError)
 }

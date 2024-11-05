@@ -22,7 +22,7 @@ func (wc *WarehouseController) CreateWarehouse(c *gin.Context) {
 	}
 
 	if request.Name == "" || request.Address == "" {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Please fill all the required fields!"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "please fill all the required fields!"})
 		return
 	}
 
@@ -32,9 +32,9 @@ func (wc *WarehouseController) CreateWarehouse(c *gin.Context) {
 		Address: request.Address,
 	}
 
-	err = wc.WarehouseUsecase.Create(&warehouse)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr := wc.WarehouseUsecase.Create(&warehouse)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -54,7 +54,7 @@ func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
 	wid := c.Param("id")
 
 	if wid == "" || request.Name == "" || request.Address == "" {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Please fill all the required fields! (id, name, address)"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "please fill all the required fields! (id, name, address)"})
 		return
 	}
 
@@ -64,9 +64,9 @@ func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
 		CreatedAt: time.Now(),
 	}
 
-	err = wc.WarehouseUsecase.ModifyByID(wid, &warehouse)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr := wc.WarehouseUsecase.ModifyByID(wid, &warehouse)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -78,13 +78,13 @@ func (wc *WarehouseController) ModifyWarehouseByID(c *gin.Context) {
 func (wc *WarehouseController) DeleteWarehouseByID(c *gin.Context) {
 	wid := c.Param("id")
 	if wid == "" {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "No id given"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "no id given"})
 		return
 	}
 
-	err := wc.WarehouseUsecase.DeleteByID(wid)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	custErr := wc.WarehouseUsecase.DeleteByID(wid)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -95,9 +95,9 @@ func (wc *WarehouseController) DeleteWarehouseByID(c *gin.Context) {
 
 func (wc *WarehouseController) GetWarehouses(c *gin.Context) {
 	warehouseName := c.Query("name")
-	warehouses, err := wc.WarehouseUsecase.Fetch(warehouseName)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	warehouses, custErr := wc.WarehouseUsecase.Fetch(warehouseName)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

@@ -12,18 +12,18 @@ func NewWarehouseUsecase(wr domain.WarehouseRepository) domain.WarehouseUsecase 
 	}
 }
 
-func (wu *warehouseUsecase) Create(warehouse *domain.Warehouse) error {
+func (wu *warehouseUsecase) Create(warehouse *domain.Warehouse) *domain.CustomError {
 	return wu.warehouseRepository.Create(warehouse)
 }
 
-func (wu *warehouseUsecase) ModifyByID(warehouseID string, warehouse *domain.Warehouse) error {
+func (wu *warehouseUsecase) ModifyByID(warehouseID string, warehouse *domain.Warehouse) *domain.CustomError {
 	return wu.warehouseRepository.ModifyByID(warehouseID, warehouse)
 }
 
-func (wu *warehouseUsecase) DeleteByID(warehouseID string) error {
+func (wu *warehouseUsecase) DeleteByID(warehouseID string) *domain.CustomError {
 	return wu.warehouseRepository.DeleteByID(warehouseID)
 }
 
-func (wu *warehouseUsecase) Fetch(name string) ([]domain.Warehouse, error) {
+func (wu *warehouseUsecase) Fetch(name string) ([]domain.Warehouse, *domain.CustomError) {
 	return wu.warehouseRepository.Fetch(name)
 }

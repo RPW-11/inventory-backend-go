@@ -23,13 +23,13 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 	}
 
 	if request.ProductPrice <= 0 {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Product price must be more than 0"})
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "product price must be more than 0"})
 		return
 	}
 
 	for _, warehouse := range request.Warehouses {
 		if warehouse.ProductQuantity <= 0 {
-			c.JSON(http.StatusBadRequest, domain.Response{Message: "Product quantity must be more than 0"})
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "product quantity must be more than 0"})
 			return
 		}
 	}
@@ -41,29 +41,22 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 		Price:       request.ProductPrice,
 	}
 
-	productId, err := ic.InventoryUsecase.CreateProductInventory(&product, request.Warehouses)
+	productId, custErr := ic.InventoryUsecase.CreateProductInventory(&product, request.Warehouses)
 
-	if err == nil {
-		c.JSON(http.StatusOK, domain.CreateInventoryResponse{
-			ProductID: productId,
-		})
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
-	switch err.Error() {
-	case "no existing warehouse":
-		c.JSON(http.StatusBadRequest, domain.Response{Message: "Warehouse doesnot exist"})
-		return
-	default:
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
-		return
-	}
+	c.JSON(http.StatusOK, domain.CreateInventoryResponse{
+		ProductID: productId,
+	})
 }
 
 func (ic *InventoryController) GetProductDetails(c *gin.Context) {
-	productDetails, err := ic.InventoryUsecase.GetProductDetails()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, domain.Response{Message: err.Error()})
+	productDetails, custErr := ic.InventoryUsecase.GetProductDetails()
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -85,13 +78,9 @@ func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
 		return
 	}
 
-	existing, err := ic.InventoryUsecase.GetByID(invID)
-	if err != nil {
-		if err.Error() == "no existing inventory" {
-			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid inventory id"})
-			return
-		}
-		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+	existing, custErr := ic.InventoryUsecase.GetByID(invID)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 
@@ -106,9 +95,9 @@ func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
 	existing.ID = 0
 	existing.UpdatedAt = time.Now()
 
-	err = ic.InventoryUsecase.ModifyByID(invID, &existing)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+	custErr = ic.InventoryUsecase.ModifyByID(invID, &existing)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
 	}
 

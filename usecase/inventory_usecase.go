@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -21,7 +22,7 @@ func NewInventoryUsecase(ir domain.InventoryRepository, pr domain.ProductReposit
 	}
 }
 
-func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, warehouses []domain.WarehouseQuantity) (string, error) {
+func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, warehouses []domain.WarehouseQuantity) (string, *domain.CustomError) {
 	// check if all warehouses exists
 	for _, w := range warehouses {
 		_, err := iu.warehouseRepository.GetByID(w.WarehouseID)
@@ -33,9 +34,10 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 	// check if the product exists
 	_, err := iu.productRepository.GetByID(product.ID)
 	if err != nil {
-		if err.Error() != "no existing product" {
+		if err.StatusCode == http.StatusInternalServerError {
 			return "", err
 		}
+
 		// create a product
 		product.ID = uuid.NewString()
 		iu.productRepository.Create(product)
@@ -46,9 +48,10 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 		// check if the inventory exists
 		existingInventory, err := iu.inventoryRepository.GetByProductWarehouseID(product.ID, w.WarehouseID)
 		if err != nil {
-			if err.Error() != "no existing inventory" {
+			if err.StatusCode == http.StatusInternalServerError {
 				return "", err
 			}
+
 			// create the inventory
 			inventory := domain.Inventory{
 				Quantity:    w.ProductQuantity,
@@ -60,6 +63,7 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 			if err != nil {
 				return "", err
 			}
+
 		} else {
 			existingInventory.Quantity += w.ProductQuantity
 			newInventory := domain.Inventory{
@@ -78,11 +82,11 @@ func (iu *inventoryUsecase) CreateProductInventory(product *domain.Product, ware
 	return product.ID, nil
 }
 
-func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, error) {
+func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, *domain.CustomError) {
 	return iu.inventoryRepository.GetByID(id)
 }
 
-func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) {
+func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, *domain.CustomError) {
 	productDetails := []domain.ProductDetail{}
 
 	products, err := iu.productRepository.Fetch("")
@@ -95,6 +99,7 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 		if err != nil {
 			return productDetails, err
 		}
+
 		productDetail := domain.ProductDetail{
 			Product:     p,
 			Inventories: []domain.InventoryDetail{},
@@ -107,6 +112,7 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 			if err != nil {
 				return productDetails, err
 			}
+
 			productDetail.Inventories = append(productDetail.Inventories, domain.InventoryDetail{
 				ID:               i.ID,
 				WarehouseID:      i.WarehouseId,
@@ -132,6 +138,6 @@ func (iu *inventoryUsecase) GetProductDetails() ([]domain.ProductDetail, error) 
 	return productDetails, err
 }
 
-func (iu *inventoryUsecase) ModifyByID(inventoryID int, inventory *domain.Inventory) error {
+func (iu *inventoryUsecase) ModifyByID(inventoryID int, inventory *domain.Inventory) *domain.CustomError {
 	return iu.inventoryRepository.ModifyByID(inventoryID, inventory)
 }
