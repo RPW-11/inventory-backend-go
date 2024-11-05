@@ -2,6 +2,7 @@ package route
 
 import (
 	"github.com/RPW-11/inventory_management_be/api/controller"
+	"github.com/RPW-11/inventory_management_be/api/middleware"
 	"github.com/RPW-11/inventory_management_be/bootstrap"
 	"github.com/RPW-11/inventory_management_be/repository"
 	"github.com/RPW-11/inventory_management_be/usecase"
@@ -18,7 +19,9 @@ func NewProductRoute(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB, st
 		ProductUsecase: usecase.NewProductUsecase(pr, sr),
 	}
 
+	roleMiddleware := middleware.RoleMiddleware()
+
 	group.GET("/product", pc.GetAllProducts)
-	group.POST("/product-images/:id", pc.UploadProductImages)
-	group.DELETE("/product-image/:id", pc.DeleteProductImage)
+	group.POST("/product-images/:id", roleMiddleware, pc.UploadProductImages)
+	group.DELETE("/product-image/:id", roleMiddleware, pc.DeleteProductImage)
 }
