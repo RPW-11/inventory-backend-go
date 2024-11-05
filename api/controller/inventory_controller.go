@@ -54,7 +54,9 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 }
 
 func (ic *InventoryController) GetProductDetails(c *gin.Context) {
-	productDetails, custErr := ic.InventoryUsecase.GetProductDetails()
+	productName := c.Query("name")
+
+	productDetails, custErr := ic.InventoryUsecase.GetProductDetails(productName)
 	if custErr != nil {
 		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return
