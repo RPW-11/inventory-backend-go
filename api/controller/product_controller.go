@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"github.com/RPW-11/inventory_management_be/internal/fileutil"
@@ -14,8 +15,27 @@ type ProductController struct {
 
 func (pc *ProductController) GetAllProducts(c *gin.Context) {
 	productName := c.Query("name")
+	pageSize, offset := 10, 0
 
-	products, custErr := pc.ProductUsecase.Fetch(productName)
+	if c.Query("pageSize") != "" {
+		val, err := strconv.Atoi(c.Query("pageSize"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid page size"})
+		}
+
+		pageSize = val
+	}
+
+	if c.Query("offset") != "" {
+		val, err := strconv.Atoi(c.Query("offset"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid offset"})
+		}
+
+		offset = val
+	}
+
+	products, custErr := pc.ProductUsecase.Fetch(productName, pageSize, offset)
 	if custErr != nil {
 		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return

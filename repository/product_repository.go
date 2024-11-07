@@ -42,7 +42,7 @@ func (pr *productRepository) GetByID(id string) (domain.Product, *domain.CustomE
 	return product, nil
 }
 
-func (pr *productRepository) Fetch(name string) ([]domain.Product, *domain.CustomError) {
+func (pr *productRepository) Fetch(name string, pageSize, offset int) ([]domain.Product, *domain.CustomError) {
 	var products []domain.Product
 	query := pr.database.Model(&products)
 
@@ -50,7 +50,7 @@ func (pr *productRepository) Fetch(name string) ([]domain.Product, *domain.Custo
 		query.Where("lower(name) LIKE lower(?)", "%"+name+"%")
 	}
 
-	result := query.Find(&products)
+	result := query.Limit(pageSize).Offset(offset).Find(&products)
 
 	if result.Error != nil {
 		return products, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)

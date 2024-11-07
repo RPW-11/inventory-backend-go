@@ -67,7 +67,7 @@ type InventoryRepository interface {
 type InventoryUsecase interface {
 	CreateProductInventory(product *Product, warehouses []WarehouseQuantity) (string, *CustomError)
 	GetByID(id int) (Inventory, *CustomError)
-	GetProductDetails(productName string) ([]ProductDetail, *CustomError)
+	GetProductDetails(productName string, pageSize, offset int) ([]ProductDetail, *CustomError)
 	GetProductDetailByID(productId string) (ProductDetail, *CustomError)
 	ModifyByID(inventoryID int, inventory *Inventory) *CustomError
 }

@@ -86,10 +86,10 @@ func (iu *inventoryUsecase) GetByID(id int) (domain.Inventory, *domain.CustomErr
 	return iu.inventoryRepository.GetByID(id)
 }
 
-func (iu *inventoryUsecase) GetProductDetails(productName string) ([]domain.ProductDetail, *domain.CustomError) {
+func (iu *inventoryUsecase) GetProductDetails(productName string, pageSize, offset int) ([]domain.ProductDetail, *domain.CustomError) {
 	productDetails := []domain.ProductDetail{}
 
-	products, err := iu.productRepository.Fetch(productName)
+	products, err := iu.productRepository.Fetch(productName, pageSize, offset)
 	if err != nil {
 		return productDetails, err
 	}

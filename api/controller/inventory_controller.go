@@ -55,8 +55,27 @@ func (ic *InventoryController) CreateProductInventory(c *gin.Context) {
 
 func (ic *InventoryController) GetProductDetails(c *gin.Context) {
 	productName := c.Query("name")
+	pageSize, offset := 10, 0
 
-	productDetails, custErr := ic.InventoryUsecase.GetProductDetails(productName)
+	if c.Query("pageSize") != "" {
+		val, err := strconv.Atoi(c.Query("pageSize"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid page size"})
+		}
+
+		pageSize = val
+	}
+
+	if c.Query("offset") != "" {
+		val, err := strconv.Atoi(c.Query("offset"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid offset"})
+		}
+
+		offset = val
+	}
+
+	productDetails, custErr := ic.InventoryUsecase.GetProductDetails(productName, pageSize, offset)
 	if custErr != nil {
 		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return

@@ -29,8 +29,8 @@ func (pu *productUsecase) GetByID(id string) (domain.Product, *domain.CustomErro
 	return pu.productRepository.GetByID(id)
 }
 
-func (pu *productUsecase) Fetch(name string) ([]domain.Product, *domain.CustomError) {
-	return pu.productRepository.Fetch(name)
+func (pu *productUsecase) Fetch(name string, pageSize, offset int) ([]domain.Product, *domain.CustomError) {
+	return pu.productRepository.Fetch(name, pageSize, offset)
 }
 
 func (pu *productUsecase) AddProductImages(fileHeaders []*multipart.FileHeader, productId string) *domain.CustomError {
