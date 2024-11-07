@@ -65,6 +65,22 @@ func (ic *InventoryController) GetProductDetails(c *gin.Context) {
 	c.JSON(http.StatusOK, productDetails)
 }
 
+func (ic *InventoryController) GetSingleProductDetail(c *gin.Context) {
+	productId := c.Param("id")
+	if productId == "" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "please provide the product's id"})
+		return
+	}
+
+	productDetail, custErr := ic.InventoryUsecase.GetProductDetailByID(productId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
+		return
+	}
+
+	c.JSON(http.StatusOK, productDetail)
+}
+
 func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
 	var request domain.UpdateQuantityRequest
 	err := c.ShouldBind(&request)

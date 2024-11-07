@@ -138,6 +138,49 @@ func (iu *inventoryUsecase) GetProductDetails(productName string) ([]domain.Prod
 	return productDetails, err
 }
 
+func (iu *inventoryUsecase) GetProductDetailByID(productId string) (domain.ProductDetail, *domain.CustomError) {
+	var productDetail domain.ProductDetail
+
+	product, err := iu.productRepository.GetByID(productId)
+	if err != nil {
+		return productDetail, err
+	}
+
+	productDetail.Product = product
+
+	ivs, err := iu.inventoryRepository.GetByProductID(productId)
+	if err != nil {
+		return productDetail, err
+	}
+
+	for _, iv := range ivs {
+		warehouse, err := iu.warehouseRepository.GetByID(iv.WarehouseId)
+		if err != nil {
+			return productDetail, err
+		}
+
+		productDetail.Inventories = append(productDetail.Inventories, domain.InventoryDetail{
+			ID:               iv.ID,
+			WarehouseID:      iv.WarehouseId,
+			WarehouseName:    warehouse.Name,
+			WarehouseAddress: warehouse.Address,
+			ProductQuantity:  iv.Quantity,
+		})
+	}
+
+	images, err := iu.productRepository.GetImagesByProductId(productId)
+	if err != nil {
+		return productDetail, err
+	}
+
+	productDetail.ImageUrls = []string{}
+	for _, img := range images {
+		productDetail.ImageUrls = append(productDetail.ImageUrls, img.ImageUrl)
+	}
+
+	return productDetail, nil
+}
+
 func (iu *inventoryUsecase) ModifyByID(inventoryID int, inventory *domain.Inventory) *domain.CustomError {
 	return iu.inventoryRepository.ModifyByID(inventoryID, inventory)
 }
