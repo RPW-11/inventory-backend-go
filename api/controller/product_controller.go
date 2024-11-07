@@ -76,3 +76,19 @@ func (pc *ProductController) DeleteProductImage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, domain.Response{Message: "product's image has been deleted successfully"})
 }
+
+func (pc *ProductController) DeleteProduct(c *gin.Context) {
+	productId := c.Param("id")
+	if productId == "" {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: "product's id can't be empty"})
+		return
+	}
+
+	custErr := pc.ProductUsecase.DeleteProduct(productId)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{Message: "product has been deleted successfully"})
+}

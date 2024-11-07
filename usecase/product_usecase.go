@@ -77,3 +77,25 @@ func (pu *productUsecase) DeleteProductImage(productImageId string) *domain.Cust
 
 	return err
 }
+
+func (pu *productUsecase) DeleteProduct(productId string) *domain.CustomError {
+	images, err := pu.productRepository.GetImagesByProductId(productId)
+	if err != nil {
+		return err
+	}
+
+	for _, img := range images {
+		fileName := img.ImageUrl[strings.LastIndex(img.ImageUrl, "/")+1:]
+		err = pu.storageRepository.DeleteImage(domain.IMAGE_DIR, fileName)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = pu.productRepository.DeleteById(productId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

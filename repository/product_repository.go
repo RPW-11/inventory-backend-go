@@ -113,3 +113,17 @@ func (pr *productRepository) DeleteImageUrl(productImageId string) *domain.Custo
 
 	return nil
 }
+
+func (pr *productRepository) DeleteById(productId string) *domain.CustomError {
+	result := pr.database.Delete(&domain.Product{}, "id = ?", productId)
+
+	if result.RowsAffected == 0 {
+		return domain.NewCustomError("invalid product id", http.StatusBadRequest)
+	}
+
+	if result.Error != nil {
+		return domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return nil
+}

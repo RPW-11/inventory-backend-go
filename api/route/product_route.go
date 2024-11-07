@@ -22,6 +22,8 @@ func NewProductRoute(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB, st
 	roleMiddleware := middleware.RoleMiddleware()
 
 	group.GET("/product", pc.GetAllProducts)
+
+	group.DELETE("/product/:id", roleMiddleware, pc.DeleteProduct)
 	group.POST("/product-images/:id", roleMiddleware, pc.UploadProductImages)
 	group.DELETE("/product-image/:id", roleMiddleware, pc.DeleteProductImage)
 }
