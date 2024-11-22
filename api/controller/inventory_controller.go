@@ -140,3 +140,20 @@ func (ic *InventoryController) UpdateQuantity(c *gin.Context) {
 
 	c.JSON(http.StatusOK, domain.Response{Message: "Quantity updated successfully"})
 }
+
+func (ic *InventoryController) UpdateProductDetails(c *gin.Context) {
+	var request domain.ProductDetail
+	err := c.ShouldBind(&request)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.Response{Message: err.Error()})
+		return
+	}
+
+	custErr := ic.InventoryUsecase.UpdateProductDetails(&request)
+	if custErr != nil {
+		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
+		return
+	}
+
+	c.JSON(http.StatusOK, domain.Response{Message: "Product details have been updated"})
+}

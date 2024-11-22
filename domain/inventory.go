@@ -70,4 +70,5 @@ type InventoryUsecase interface {
 	GetProductDetails(productName string, pageSize, offset int) ([]ProductDetail, *CustomError)
 	GetProductDetailByID(productId string) (ProductDetail, *CustomError)
 	ModifyByID(inventoryID int, inventory *Inventory) *CustomError
+	UpdateProductDetails(productDetail *ProductDetail) *CustomError
 }

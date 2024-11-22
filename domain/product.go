@@ -43,6 +43,7 @@ type ProductRepository interface {
 	DeleteById(productId string) *CustomError
 	GetImageById(productImageId string) (ProductImage, *CustomError)
 	GetImagesByProductId(productId string) ([]ProductImage, *CustomError)
+	ModifyByID(product *Product) *CustomError
 }
 
 type ProductUsecase interface {

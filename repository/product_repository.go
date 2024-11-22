@@ -2,6 +2,7 @@ package repository
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"gorm.io/gorm"
@@ -45,6 +46,8 @@ func (pr *productRepository) GetByID(id string) (domain.Product, *domain.CustomE
 func (pr *productRepository) Fetch(name string, pageSize, offset int) ([]domain.Product, *domain.CustomError) {
 	var products []domain.Product
 	query := pr.database.Model(&products)
+
+	query.Order("updated_at desc")
 
 	if name != "" {
 		query.Where("lower(name) LIKE lower(?)", "%"+name+"%")
@@ -116,6 +119,21 @@ func (pr *productRepository) DeleteImageUrl(productImageId string) *domain.Custo
 
 func (pr *productRepository) DeleteById(productId string) *domain.CustomError {
 	result := pr.database.Delete(&domain.Product{}, "id = ?", productId)
+
+	if result.RowsAffected == 0 {
+		return domain.NewCustomError("invalid product id", http.StatusBadRequest)
+	}
+
+	if result.Error != nil {
+		return domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)
+	}
+
+	return nil
+}
+
+func (pr *productRepository) ModifyByID(product *domain.Product) *domain.CustomError {
+	product.UpdatedAt = time.Now()
+	result := pr.database.Model(&domain.Product{ID: product.ID}).Updates(product)
 
 	if result.RowsAffected == 0 {
 		return domain.NewCustomError("invalid product id", http.StatusBadRequest)

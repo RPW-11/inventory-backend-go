@@ -26,4 +26,5 @@ func NewInventoryRoute(group *gin.RouterGroup, env *bootstrap.Env, db *gorm.DB) 
 
 	group.POST("/inventory", roleMiddleware, ic.CreateProductInventory)
 	group.PATCH("/inventory-update-quantity/:id", roleMiddleware, ic.UpdateQuantity)
+	group.PUT("/update-productdetails", roleMiddleware, ic.UpdateProductDetails)
 }

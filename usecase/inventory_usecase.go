@@ -184,3 +184,24 @@ func (iu *inventoryUsecase) GetProductDetailByID(productId string) (domain.Produ
 func (iu *inventoryUsecase) ModifyByID(inventoryID int, inventory *domain.Inventory) *domain.CustomError {
 	return iu.inventoryRepository.ModifyByID(inventoryID, inventory)
 }
+
+func (iu *inventoryUsecase) UpdateProductDetails(productDetail *domain.ProductDetail) *domain.CustomError {
+	// update the product
+	err := iu.productRepository.ModifyByID(&productDetail.Product)
+	if err != nil {
+		return err
+	}
+
+	// update the inventory
+	for _, inventory := range productDetail.Inventories {
+		err = iu.inventoryRepository.ModifyByID(inventory.ID, &domain.Inventory{
+			Quantity: inventory.ProductQuantity,
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

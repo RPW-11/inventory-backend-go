@@ -2,6 +2,7 @@ package repository
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/RPW-11/inventory_management_be/domain"
 	"gorm.io/gorm"
@@ -58,6 +59,7 @@ func (ir *inventoryRepository) GetByProductWarehouseID(productID, warehouseID st
 }
 
 func (ir *inventoryRepository) ModifyByID(inventoryID int, inventory *domain.Inventory) *domain.CustomError {
+	inventory.UpdatedAt = time.Now()
 	result := ir.database.Model(&domain.Inventory{ID: inventoryID}).Updates(inventory)
 
 	if result.Error != nil {
