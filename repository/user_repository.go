@@ -67,9 +67,17 @@ func (ur *userRepository) ModifyUserByID(id string, user *domain.User) *domain.C
 	return nil
 }
 
-func (ur *userRepository) Fetch() ([]domain.User, *domain.CustomError) {
+func (ur *userRepository) Fetch(name string, pageSize, offset int) ([]domain.User, *domain.CustomError) {
 	var users []domain.User
-	result := ur.database.Select("id", "email", "position", "full_name", "phone_number", "image_url", "created_at", "updated_at").Find(&users)
+	query := ur.database.Model(&users)
+
+	query.Order("updated_at desc")
+
+	if name != "" {
+		query.Where("lower(full_name) LIKE lower(?)", "%"+name+"%")
+	}
+
+	result := query.Limit(pageSize).Offset(offset).Select("id", "email", "position", "full_name", "phone_number", "image_url", "created_at", "updated_at").Find(&users)
 
 	if result.Error != nil {
 		return users, domain.NewCustomError(result.Error.Error(), http.StatusInternalServerError)

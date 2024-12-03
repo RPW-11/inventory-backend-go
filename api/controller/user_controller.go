@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/RPW-11/inventory_management_be/domain"
@@ -25,7 +26,28 @@ func (uc *UserController) GetUserProfile(c *gin.Context) {
 }
 
 func (uc *UserController) GetAllUsers(c *gin.Context) {
-	users, custErr := uc.UserUsecase.GetAllUsers()
+	userName := c.Query("name")
+	pageSize, offset := 10, 0
+
+	if c.Query("pageSize") != "" {
+		val, err := strconv.Atoi(c.Query("pageSize"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid page size"})
+		}
+
+		pageSize = val
+	}
+
+	if c.Query("offset") != "" {
+		val, err := strconv.Atoi(c.Query("offset"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, domain.Response{Message: "invalid offset"})
+		}
+
+		offset = val
+	}
+
+	users, custErr := uc.UserUsecase.GetAllUsers(userName, pageSize, offset)
 	if custErr != nil {
 		c.JSON(custErr.StatusCode, domain.Response{Message: custErr.Message})
 		return

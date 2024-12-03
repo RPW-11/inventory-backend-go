@@ -45,6 +45,6 @@ func (uu *userUsecase) UpdateProfilePicture(userId string, file multipart.File, 
 	return err
 }
 
-func (uu *userUsecase) GetAllUsers() ([]domain.User, *domain.CustomError) {
-	return uu.userRepository.Fetch()
+func (uu *userUsecase) GetAllUsers(name string, pageSize, offset int) ([]domain.User, *domain.CustomError) {
+	return uu.userRepository.Fetch(name, pageSize, offset)
 }

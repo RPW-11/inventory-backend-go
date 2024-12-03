@@ -41,11 +41,11 @@ type UserRepository interface {
 	GetByEmail(email string) (User, *CustomError)
 	GetByID(id string) (User, *CustomError)
 	ModifyUserByID(id string, user *User) *CustomError
-	Fetch() ([]User, *CustomError)
+	Fetch(name string, pageSize, offset int) ([]User, *CustomError)
 }
 
 type UserUsecase interface {
 	GetProfile(id string) (Profile, *CustomError)
-	GetAllUsers() ([]User, *CustomError)
+	GetAllUsers(name string, pageSize, offset int) ([]User, *CustomError)
 	UpdateProfilePicture(userId string, file multipart.File, fileHeader *multipart.FileHeader) *CustomError
 }
