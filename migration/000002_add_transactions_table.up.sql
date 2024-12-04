@@ -3,7 +3,7 @@ CREATE TABLE "Transaction" (
   "product_id" varchar(100) NOT NULL,
   "warehouse_id" varchar(100) NOT NULL,
   "quantity" integer NOT NULL CHECK ("quantity" > 0),
-  "total_price" integer NOT NULL CHECK ("total_price" >= 0),
+  "total_price" decimal(10,2) NOT NULL CHECK ("total_price" >= 0),
   "description" text,
   "employee_in_charge" varchar(100) NOT NULL,
   "transaction_type" VARCHAR NOT NULL,
