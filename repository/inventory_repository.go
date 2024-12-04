@@ -48,7 +48,7 @@ func (ir *inventoryRepository) GetByProductWarehouseID(productID, warehouseID st
 	result := ir.database.Where(&domain.Inventory{ProductId: productID, WarehouseId: warehouseID}).Find(&inventory)
 
 	if result.RowsAffected == 0 {
-		return inventory, domain.NewCustomError("inventory doesnot exist", http.StatusBadRequest)
+		return inventory, domain.NewCustomError("inventory does not exist", http.StatusBadRequest)
 	}
 
 	if result.Error != nil {
