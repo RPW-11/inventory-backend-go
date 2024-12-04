@@ -1,5 +1,5 @@
 CREATE TABLE "Transaction" (
-  "transaction_id" serial PRIMARY KEY,
+  "id" serial PRIMARY KEY,
   "product_id" varchar(100) NOT NULL,
   "warehouse_id" varchar(100) NOT NULL,
   "quantity" integer NOT NULL CHECK ("quantity" > 0),
